@@ -1,0 +1,23 @@
+{
+  "globals": {
+    "window": true,
+  },
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "parserOptions": {
+      "ecmaFeatures": {
+          "experimentalObjectRestSpread": true,
+          "jsx": true,
+          "es6": true,
+      },
+      "sourceType": "module"
+  },
+  "plugins": [
+    "babel",
+    "react"
+  ],
+  "rules": {
+    "comma-dangle": "off",
+    "import/no-unresolved": ["error", { ignore: ["^react$"] }]
+  }
+}
