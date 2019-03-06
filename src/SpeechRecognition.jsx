@@ -1,16 +1,18 @@
 import {
   memo,
   useRef,
-  useEffect
+  useEffect,
+  useState
 } from 'react';
 
 const defaultSettings = {
   lang: 'en-US',
-  interimResults: true,
+  interimResults: true
 };
 
 const Speak = (props) => {
   const recognition = useRef(null);
+  const [started, setStarted] = useState(false);
   const {
     active,
     interimResults,
@@ -31,50 +33,56 @@ const Speak = (props) => {
     }
   };
 
-  // Start and stop listening
-  useEffect(() => {
-    if (!recognition.current) return;
-    if (active) {
-      recognition.current.onresult = processResult;
-      // SpeechRecognition stops automatically after inactivity
-      // We want it to keep going until we tell it to stop
-      recognition.current.onend = () => recognition.current.start();
-      try {
-        recognition.current.start();
-      } catch (e) {
-        // Recognition has already started
-      }
-    } else {
-      recognition.current.onend = () => {};
-      try {
-        recognition.current.stop();
-        if (onEnd) {
-          onEnd();
-        }
-      } catch (e) {
-        // Recognition has already stopped
-      }
+  const start = () => {
+    recognition.current.onresult = processResult;
+    // SpeechRecognition stops automatically after inactivity
+    // We want it to keep going until we tell it to stop
+    recognition.current.onend = () => recognition.current.start();
+    if (!started) {
+      recognition.current.start();
+      setStarted(true);
     }
-  }, [active]);
+  };
+
+  const stop = () => {
+    if (!started) return;
+    recognition.current.onend = () => {};
+    recognition.current.stop();
+    setStarted(false);
+    onEnd();
+  };
 
   useEffect(() => {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (window.SpeechRecognition) {
+    if (!window.SpeechRecognition) {
       if (onBrowserNotSupported) {
         onBrowserNotSupported();
       }
       return;
     }
+
     recognition.current = new window.SpeechRecognition();
   }, []);
 
+  // Start and stop listening
+  useEffect(() => {
+    if (!recognition.current) return;
+    if (active) {
+      start();
+    } else {
+      stop();
+    }
+  }, [active]);
+
   // Update language
   useEffect(() => {
+    if (!recognition.current) return;
     recognition.current.lang = lang || defaultSettings.lang;
   }, [lang]);
 
   // Update interimResults
   useEffect(() => {
+    if (!recognition.current) return;
     recognition.current.interimResults = interimResults || defaultSettings.interimResults;
   }, [interimResults]);
 
