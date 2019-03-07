@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { SpeechSynthesis } from '../../src';
-import styled from 'styled-components';
-
-const StyledExample = styled.div`
-  textarea {
-    font-size: 16px;
-    margin-bottom: 8px;
-    width: 100%;
-  }
-`;
+import { Container } from './shared';
 
 const Example = () => {
   const [active, setActive] = useState(false);
-  const [text, setText] = useState('Press Speak below to hear me speak');
+  const [text, setText] = useState('I am a robot');
   const [delay, setDelay] = useState(0);
   const [voiceOptions, setVoiceOptions] = useState([]);
   const [voice, setVoice] = useState('Alex');
+  const [supported, setSupported] = useState(true);
+
+  const toggleActive = () => {
+    setActive(!active);
+  };
 
   const onStart = () => {
     console.log('start!');
@@ -25,19 +22,25 @@ const Example = () => {
     setActive(false);
   }
 
+  const onBrowserNotSupported = () => {
+    setSupported(false);
+    console.log('aaah')
+  }
+
   return (
-    <StyledExample>
-      <h1>Speech Synthesis Example</h1>
+    <Container>
+      <h2>Speech Synthesis Example</h2>
       <p>
         Type something into the text input below, then click on 'Speak' and
         SpeechSynthesis will read your message.
       </p>
+      {supported}
       <select
         value={voice}
         onChange={(event) => setVoice(event.target.value)}
       >
         {voiceOptions.map(option => (
-          <option value={option.name}>
+          <option key={option.name} value={option.name}>
             {option.lang} - {option.name}
           </option>
         ))}
@@ -47,16 +50,9 @@ const Example = () => {
         value={text}
         onChange={() => setText(event.target.value)}
       />
-      <label htmlFor="speak">
-        Speak
-      </label>
-      <input
-        type="checkbox"
-        id="speak"
-        name="speak"
-        checked={active}
-        onChange={(event) => setActive(event.target.checked)}
-      />
+      <button onClick={toggleActive}>
+        {active ? 'Stop' : 'Speak'}
+      </button>
       <SpeechSynthesis
         text={text}
         voice={voice}
@@ -64,8 +60,9 @@ const Example = () => {
         onEnd={onEnd}
         onStart={onStart}
         onVoicesLoaded={setVoiceOptions}
+        onNotSupported={onBrowserNotSupported}
       />
-    </StyledExample>
+    </Container>
   );
 };
 

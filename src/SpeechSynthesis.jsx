@@ -9,7 +9,7 @@ const SpeechSynthesis = (props) => {
   const {
     active,
     text,
-    onBrowserNotSupported,
+    onUnsupported,
     onEnd,
     onVoicesLoaded,
     voice
@@ -20,8 +20,10 @@ const SpeechSynthesis = (props) => {
 
   useEffect(() => {
     if (!window.speechSynthesis) {
-      if (onBrowserNotSupported) {
-        onBrowserNotSupported();
+      console.log('aaaa');
+      if (onUnsupported) {
+        console.log('noo')
+        onUnsupported();
         return;
       }
     }

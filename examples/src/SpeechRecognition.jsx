@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { SpeechRecognition } from '../../src';
-import { StyledTextArea } from './shared';
+import { Container } from './shared';
 
 const Example = () => {
   const [active, setActive] = useState(false);
@@ -24,8 +24,8 @@ const Example = () => {
   }
 
   return (
-    <div>
-      <h1>Speech Recognition Example</h1>
+    <Container>
+      <h2>Speech Recognition Example</h2>
       <p>
         Click 'Listen' and start speaking. SpeechRecognition will provide a transcript of what you are saying.
       </p>
@@ -35,19 +35,21 @@ const Example = () => {
         <option value="fa-IR">Persian</option>
         <option value="km-KH">Cambodian</option>
       </select>
-      {active && <span>Go ahead I'm listening ...</span>}
-      <StyledTextArea
+      <textarea
         value={value}
         rows={3}
+        disabled
       />
-      <button onClick={toggleActive}>Listen</button>
+      <button onClick={toggleActive}>
+        {active ? 'Stop' : 'Listen'}
+      </button>
       <SpeechRecognition
         lang={language}
         onEnd={onEnd}
         onResult={onResult}
         active={active}
       />
-    </div>
+    </Container>
   );
 }
 
