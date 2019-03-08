@@ -11,6 +11,10 @@ export const Container = styled.div`
     margin-top: 0;
   }
 
+  label {
+    font-weight: bold;
+  }
+
   select, textarea {
     margin-bottom: 8px;
     width: 100%;

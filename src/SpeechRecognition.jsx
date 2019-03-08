@@ -17,7 +17,7 @@ const Speak = (props) => {
     active,
     interimResults,
     lang,
-    onBrowserNotSupported,
+    onUnsupported,
     onEnd,
     onResult
   } = props;
@@ -55,8 +55,8 @@ const Speak = (props) => {
   useEffect(() => {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!window.SpeechRecognition) {
-      if (onBrowserNotSupported) {
-        onBrowserNotSupported();
+      if (onUnsupported) {
+        onUnsupported();
       }
       return;
     }

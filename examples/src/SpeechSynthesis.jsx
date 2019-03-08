@@ -8,7 +8,7 @@ const Example = () => {
   const [delay, setDelay] = useState(0);
   const [voiceOptions, setVoiceOptions] = useState([]);
   const [voice, setVoice] = useState('Alex');
-  const [supported, setSupported] = useState(true);
+  const [unsupported, setUnsupported] = useState(false);
 
   const toggleActive = () => {
     setActive(!active);
@@ -22,46 +22,59 @@ const Example = () => {
     setActive(false);
   }
 
-  const onBrowserNotSupported = () => {
-    setSupported(false);
-    console.log('aaah')
+  const onUnsupported = () => {
+    setUnsupported(true);
   }
 
   return (
     <Container>
       <h2>Speech Synthesis Example</h2>
-      <p>
-        Type something into the text input below, then click on 'Speak' and
-        SpeechSynthesis will read your message.
-      </p>
-      {supported}
-      <select
-        value={voice}
-        onChange={(event) => setVoice(event.target.value)}
-      >
-        {voiceOptions.map(option => (
-          <option key={option.name} value={option.name}>
-            {option.lang} - {option.name}
-          </option>
-        ))}
-      </select>
-      <textarea
-        rows={3}
-        value={text}
-        onChange={() => setText(event.target.value)}
-      />
-      <button onClick={toggleActive}>
-        {active ? 'Stop' : 'Speak'}
-      </button>
-      <SpeechSynthesis
-        text={text}
-        voice={voice}
-        active={active}
-        onEnd={onEnd}
-        onStart={onStart}
-        onVoicesLoaded={setVoiceOptions}
-        onNotSupported={onBrowserNotSupported}
-      />
+      {unsupported
+        ? <p>Oh no, it looks like your browser doesn't support Speech Synthesis.</p>
+        : <React.Fragment>
+            <p>
+              Type a message below then click on 'Speak' and
+              SpeechSynthesis will read it out.
+            </p>
+            <label htmlFor="voice">
+              Voice
+            </label>
+            <select
+              id="voice"
+              name="voice"
+              value={voice}
+              onChange={(event) => setVoice(event.target.value)}
+            >
+              {voiceOptions.map(option => (
+                <option key={option.name} value={option.name}>
+                  {option.lang} - {option.name}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="message">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={3}
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+            />
+            <button onClick={toggleActive}>
+              {active ? 'Stop' : 'Speak'}
+            </button>
+            <SpeechSynthesis
+              text={text}
+              voice={voice}
+              active={active}
+              onEnd={onEnd}
+              onStart={onStart}
+              onVoicesLoaded={setVoiceOptions}
+              onUnsupported={onUnsupported}
+            />
+          </React.Fragment>
+      }
     </Container>
   );
 };

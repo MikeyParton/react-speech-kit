@@ -5,7 +5,7 @@ import SpeechRecognitionExample from './SpeechRecognition';
 
 const App = () => (
   <div>
-    <h1>react-speech-kit</h1>
+    <h1>🎙️ react-speech-kit</h1>
     <SpeechSynthesisExample />
     <SpeechRecognitionExample />
   </div>
