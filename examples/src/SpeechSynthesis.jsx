@@ -1,21 +1,18 @@
 import React, { useState } from 'react';
 import { SpeechSynthesis } from '../../src';
-import styled from 'styled-components';
-
-const StyledExample = styled.div`
-  textarea {
-    font-size: 16px;
-    margin-bottom: 8px;
-    width: 100%;
-  }
-`;
+import { Container } from './shared';
 
 const Example = () => {
   const [active, setActive] = useState(false);
-  const [text, setText] = useState('Press Speak below to hear me speak');
+  const [text, setText] = useState('I am a robot');
   const [delay, setDelay] = useState(0);
   const [voiceOptions, setVoiceOptions] = useState([]);
   const [voice, setVoice] = useState('Alex');
+  const [unsupported, setUnsupported] = useState(false);
+
+  const toggleActive = () => {
+    setActive(!active);
+  };
 
   const onStart = () => {
     console.log('start!');
@@ -25,47 +22,60 @@ const Example = () => {
     setActive(false);
   }
 
+  const onUnsupported = () => {
+    setUnsupported(true);
+  }
+
   return (
-    <StyledExample>
-      <h1>Speech Synthesis Example</h1>
-      <p>
-        Type something into the text input below, then click on 'Speak' and
-        SpeechSynthesis will read your message.
-      </p>
-      <select
-        value={voice}
-        onChange={(event) => setVoice(event.target.value)}
-      >
-        {voiceOptions.map(option => (
-          <option value={option.name}>
-            {option.lang} - {option.name}
-          </option>
-        ))}
-      </select>
-      <textarea
-        rows={3}
-        value={text}
-        onChange={() => setText(event.target.value)}
-      />
-      <label htmlFor="speak">
-        Speak
-      </label>
-      <input
-        type="checkbox"
-        id="speak"
-        name="speak"
-        checked={active}
-        onChange={(event) => setActive(event.target.checked)}
-      />
-      <SpeechSynthesis
-        text={text}
-        voice={voice}
-        active={active}
-        onEnd={onEnd}
-        onStart={onStart}
-        onVoicesLoaded={setVoiceOptions}
-      />
-    </StyledExample>
+    <Container>
+      <h2>Speech Synthesis Example</h2>
+      {unsupported
+        ? <p>Oh no, it looks like your browser doesn't support Speech Synthesis.</p>
+        : <React.Fragment>
+            <p>
+              Type a message below then click on 'Speak' and
+              SpeechSynthesis will read it out.
+            </p>
+            <label htmlFor="voice">
+              Voice
+            </label>
+            <select
+              id="voice"
+              name="voice"
+              value={voice}
+              onChange={(event) => setVoice(event.target.value)}
+            >
+              {voiceOptions.map(option => (
+                <option key={option.name} value={option.name}>
+                  {option.lang} - {option.name}
+                </option>
+              ))}
+            </select>
+            <label htmlFor="message">
+              Message
+            </label>
+            <textarea
+              id="message"
+              name="message"
+              rows={3}
+              value={text}
+              onChange={(event) => setText(event.target.value)}
+            />
+            <button onClick={toggleActive}>
+              {active ? 'Stop' : 'Speak'}
+            </button>
+            <SpeechSynthesis
+              text={text}
+              voice={voice}
+              active={active}
+              onEnd={onEnd}
+              onStart={onStart}
+              onVoicesLoaded={setVoiceOptions}
+              onUnsupported={onUnsupported}
+            />
+          </React.Fragment>
+      }
+    </Container>
   );
 };
 

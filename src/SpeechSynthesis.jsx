@@ -9,55 +9,70 @@ const SpeechSynthesis = (props) => {
   const {
     active,
     text,
-    onBrowserNotSupported,
+    onUnsupported,
     onEnd,
     onVoicesLoaded,
     voice
   } = props;
-  const [started, setStarted] = useState(false);
   const [voices, setVoices] = useState(null);
-  const utterance = useRef();
+  const [voiceOption, setVoiceOption] = useState(null);
+
+  const getUtterance = () => {
+    // Firefox requires won't repeat an utterance that has been
+    // spoken, so we need to create a new instance each time
+    const utterance = new window.SpeechSynthesisUtterance();
+    utterance.text = text;
+    utterance.voice = voiceOption;
+    if (onEnd) {
+      utterance.onend = onEnd;
+    }
+    return utterance;
+  }
+
+  const processVoices = (voiceOptions) => {
+    setVoices(voiceOptions);
+    if (onVoicesLoaded) {
+      onVoicesLoaded(voiceOptions);
+    }
+  }
+
+  const getVoices = () => {
+    // Firefox seems to have voices upfront and never calls the
+    // voiceschanged event
+    let voiceOptions = window.speechSynthesis.getVoices();
+    if (voiceOptions.length > 0) {
+      processVoices(voiceOptions);
+      return;
+    }
+
+    window.speechSynthesis.onvoiceschanged = (event) => {
+      voiceOptions = event.target.getVoices();
+      processVoices(voiceOptions);
+    };
+  }
 
   useEffect(() => {
     if (!window.speechSynthesis) {
-      if (onBrowserNotSupported) {
-        onBrowserNotSupported();
-        return;
+      if (onUnsupported) {
+        onUnsupported();
       }
+      return;
     }
-    utterance.current = new window.SpeechSynthesisUtterance();
-    window.speechSynthesis.addEventListener('voiceschanged', (event) => {
-      const voiceOptions = event.target.getVoices();
-      setVoices(voiceOptions);
-      if (onVoicesLoaded) {
-        onVoicesLoaded(voiceOptions);
-      }
-    });
+    getVoices();
   }, []);
 
   // Change voice
   useEffect(() => {
     if (voices) {
       const voiceOption = voices.find(option => option.name === voice);
-      utterance.current.voice = voiceOption;
+      setVoiceOption(voiceOption);
     }
   }, [voice, voices]);
 
-  // Change text
-  useEffect(() => {
-    utterance.current.text = text;
-  }, [text]);
-
   useEffect(() => {
     if (active) {
-      if (onEnd) {
-        utterance.current.onend = onEnd;
-      }
-      setStarted(true);
-      window.speechSynthesis.speak(utterance.current);
+      window.speechSynthesis.speak(getUtterance());
     } else {
-      if (!started) return;
-      setStarted(false);
       window.speechSynthesis.cancel();
     }
   }, [active]);
