@@ -30,7 +30,7 @@ const Example = () => {
 
   return (
     <Container>
-      <h2>Speech Recognition Example</h2>
+      <h2>Speech Recognition</h2>
       {unsupported
         ? <p>Oh no, it looks like your browser doesn't support Speech Recognition.</p>
         : <React.Fragment>

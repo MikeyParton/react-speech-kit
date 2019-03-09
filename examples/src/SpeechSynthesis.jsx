@@ -28,12 +28,12 @@ const Example = () => {
 
   return (
     <Container>
-      <h2>Speech Synthesis Example</h2>
+      <h2>Speech Synthesis</h2>
       {unsupported
         ? <p>Oh no, it looks like your browser doesn't support Speech Synthesis.</p>
         : <React.Fragment>
             <p>
-              Type a message below then click on 'Speak' and
+              Type a message below then click 'Speak' and
               SpeechSynthesis will read it out.
             </p>
             <label htmlFor="voice">

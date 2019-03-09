@@ -25,13 +25,20 @@ module.exports = {
             options: { minimize: true }
           }
         ]
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [
+          'file-loader'
+        ]
       }
     ]
   },
   plugins: [
     new HtmlWebPackPlugin({
       template: './examples/src/index.html',
-      filename: './index.html'
+      filename: './index.html',
+      favicon: 'examples/src/images/favicon.ico'
     })
   ],
   devServer: {
