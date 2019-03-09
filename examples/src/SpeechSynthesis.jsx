@@ -7,7 +7,7 @@ const Example = () => {
   const [text, setText] = useState('I am a robot');
   const [delay, setDelay] = useState(0);
   const [voiceOptions, setVoiceOptions] = useState([]);
-  const [voice, setVoice] = useState('Alex');
+  const [voice, setVoice] = useState(null);
   const [unsupported, setUnsupported] = useState(false);
 
   const toggleActive = () => {
@@ -45,8 +45,9 @@ const Example = () => {
               value={voice}
               onChange={(event) => setVoice(event.target.value)}
             >
+              <option disabled selected value> -- select a voice -- </option>
               {voiceOptions.map(option => (
-                <option key={option.name} value={option.name}>
+                <option key={option.voiceURI} value={option.voiceURI}>
                   {option.lang} - {option.name}
                 </option>
               ))}
@@ -66,7 +67,7 @@ const Example = () => {
             </button>
             <SpeechSynthesis
               text={text}
-              voice={voice}
+              voiceURI={voice}
               active={active}
               onEnd={onEnd}
               onStart={onStart}

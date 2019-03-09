@@ -1,9 +1,25 @@
 import {
   memo,
   useEffect,
-  useRef,
   useState
 } from 'react';
+import PropTypes from 'prop-types';
+
+const propTypes = {
+  active: PropTypes.bool.isRequired,
+  interimResults: PropTypes.bool,
+  lang: PropTypes.string,
+  onEnd: PropTypes.func,
+  onResult: PropTypes.func,
+  onUnsupported: PropTypes.func
+};
+
+const defaultProps = {
+  voiceURI: '',
+  onEnd: () => {},
+  onResult: () => {},
+  onUnsupported: () => {}
+};
 
 const SpeechSynthesis = (props) => {
   const {
@@ -12,29 +28,25 @@ const SpeechSynthesis = (props) => {
     onUnsupported,
     onEnd,
     onVoicesLoaded,
-    voice
+    voiceURI
   } = props;
   const [voices, setVoices] = useState(null);
-  const [voiceOption, setVoiceOption] = useState(null);
+  const [voice, setVoice] = useState(null);
 
   const getUtterance = () => {
     // Firefox requires won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
     const utterance = new window.SpeechSynthesisUtterance();
     utterance.text = text;
-    utterance.voice = voiceOption;
-    if (onEnd) {
-      utterance.onend = onEnd;
-    }
+    utterance.voice = voice;
+    utterance.onend = onEnd;
     return utterance;
-  }
+  };
 
   const processVoices = (voiceOptions) => {
     setVoices(voiceOptions);
-    if (onVoicesLoaded) {
-      onVoicesLoaded(voiceOptions);
-    }
-  }
+    onVoicesLoaded(voiceOptions);
+  };
 
   const getVoices = () => {
     // Firefox seems to have voices upfront and never calls the
@@ -49,13 +61,11 @@ const SpeechSynthesis = (props) => {
       voiceOptions = event.target.getVoices();
       processVoices(voiceOptions);
     };
-  }
+  };
 
   useEffect(() => {
     if (!window.speechSynthesis) {
-      if (onUnsupported) {
-        onUnsupported();
-      }
+      onUnsupported();
       return;
     }
     getVoices();
@@ -64,10 +74,11 @@ const SpeechSynthesis = (props) => {
   // Change voice
   useEffect(() => {
     if (voices) {
-      const voiceOption = voices.find(option => option.name === voice);
-      setVoiceOption(voiceOption);
+      debugger
+      const newVoice = voices.find(option => option.voiceURI === voiceURI);
+      setVoice(newVoice);
     }
-  }, [voice, voices]);
+  }, [voiceURI, voices]);
 
   useEffect(() => {
     if (active) {
@@ -79,5 +90,8 @@ const SpeechSynthesis = (props) => {
 
   return null;
 };
+
+SpeechSynthesis.propTypes = propTypes;
+SpeechSynthesis.defaultProps = defaultProps;
 
 export default memo(SpeechSynthesis);

@@ -4,13 +4,26 @@ import {
   useEffect,
   useState
 } from 'react';
+import PropTypes from 'prop-types';
 
-const defaultSettings = {
-  lang: 'en-US',
-  interimResults: true
+const propTypes = {
+  active: PropTypes.bool.isRequired,
+  interimResults: PropTypes.bool,
+  lang: PropTypes.string,
+  onEnd: PropTypes.func,
+  onResult: PropTypes.func,
+  onUnsupported: PropTypes.func
 };
 
-const Speak = (props) => {
+const defaultProps = {
+  interimResults: true,
+  lang: '',
+  onEnd: () => {},
+  onResult: () => {},
+  onUnsupported: () => {}
+};
+
+const SpeechRekognition = (props) => {
   const recognition = useRef(null);
   const [started, setStarted] = useState(false);
   const {
@@ -28,9 +41,7 @@ const Speak = (props) => {
       .map(result => result.transcript)
       .join('');
 
-    if (onResult) {
-      onResult(transcript);
-    }
+    onResult(transcript);
   };
 
   const start = () => {
@@ -55,9 +66,7 @@ const Speak = (props) => {
   useEffect(() => {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!window.SpeechRecognition) {
-      if (onUnsupported) {
-        onUnsupported();
-      }
+      onUnsupported();
       return;
     }
 
@@ -77,13 +86,13 @@ const Speak = (props) => {
   // Update language
   useEffect(() => {
     if (!recognition.current) return;
-    recognition.current.lang = lang || defaultSettings.lang;
+    recognition.current.lang = lang;
   }, [lang]);
 
   // Update interimResults
   useEffect(() => {
     if (!recognition.current) return;
-    recognition.current.interimResults = interimResults || defaultSettings.interimResults;
+    recognition.current.interimResults = interimResults;
   }, [interimResults]);
 
   return null;
@@ -91,4 +100,7 @@ const Speak = (props) => {
 
 const areEqual = (prevProps, nextProps) => ['active', 'lang', 'interimResults'].every(key => prevProps[key] === nextProps[key]);
 
-export default memo(Speak, areEqual);
+SpeechRekognition.propTypes = propTypes;
+SpeechRekognition.defaultProps = defaultProps;
+
+export default memo(SpeechRekognition, areEqual);
