@@ -7,7 +7,10 @@
     "build": "babel src -d dist --copy-files",
     "start": "webpack-dev-server --mode development",
     "lint": "./node_modules/.bin/eslint src --ext .js,.jsx",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build-demo": "webpack --mode production",
+    "deploy-demo": "gh-pages -d examples/dist",
+    "publish-demo": "npm run build-demo && npm run deploy-demo"
   },
   "author": "Michael Parton",
   "license": "MIT",
@@ -26,6 +29,7 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
+    "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
     "react": "^16.8.0",
