@@ -6,7 +6,7 @@
   "scripts": {
     "build": "babel src -d dist --copy-files",
     "start": "webpack-dev-server --mode development",
-    "lint": "./node_modules/.bin/eslint src --ext .js,.jsx",
+    "lint": "./node_modules/.bin/eslint src examples/src --ext .js,.jsx",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build-demo": "webpack --mode production",
     "deploy-demo": "gh-pages -d examples/dist",
@@ -15,7 +15,8 @@
   "author": "Michael Parton",
   "license": "MIT",
   "peerDependencies": {
-    "react": "^16.8.0"
+    "react": "^16.8.0",
+    "prop-types": "^15.7.2"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
@@ -33,6 +34,7 @@
     "gh-pages": "^2.0.1",
     "html-loader": "^0.5.5",
     "html-webpack-plugin": "^3.2.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.0",
     "react-dom": "^16.8.3",
     "styled-components": "^4.1.3",
@@ -40,7 +42,5 @@
     "webpack-cli": "^3.2.3",
     "webpack-dev-server": "^3.2.1"
   },
-  "dependencies": {
-    "prop-types": "^15.7.2"
-  }
+  "dependencies": {}
 }

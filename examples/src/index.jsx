@@ -1,20 +1,30 @@
 import React from 'react';
-import { render} from 'react-dom';
+import { render } from 'react-dom';
 import SpeechSynthesisExample from './SpeechSynthesis';
 import SpeechRecognitionExample from './SpeechRecognition';
-import { GlobalStyles, Row, GitLink, Title } from './shared';
+import {
+  GlobalStyles,
+  Row,
+  GitLink,
+  Title
+} from './shared';
 import gh from './images/github.png';
 
 const App = () => (
   <div>
     <GlobalStyles />
-    <Title>react-speech-kit 🎤</Title>
+    <Title>
+      {'react-speech-kit '}
+      <span role="img" aria-label="microphone">
+        🎤
+      </span>
+    </Title>
     <Row>
       <SpeechSynthesisExample />
       <SpeechRecognitionExample />
     </Row>
     <GitLink>
-      <img src={gh} />
+      <img alt="Github" src={gh} />
       <a href="https://github.com/MikeyParton/react-speech-kit">
         By MikeyParton
       </a>

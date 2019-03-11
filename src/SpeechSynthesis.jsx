@@ -74,7 +74,6 @@ const SpeechSynthesis = (props) => {
   // Change voice
   useEffect(() => {
     if (voices) {
-      debugger
       const newVoice = voices.find(option => option.voiceURI === voiceURI);
       setVoice(newVoice);
     }
