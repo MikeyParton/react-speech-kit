@@ -6,46 +6,22 @@ import {
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  active: PropTypes.bool.isRequired,
-  interimResults: PropTypes.bool,
-  lang: PropTypes.string,
   onEnd: PropTypes.func,
-  onResult: PropTypes.func,
-  onUnsupported: PropTypes.func
+  children: PropTypes.func.isRequired
 };
 
 const defaultProps = {
-  voiceURI: '',
-  onEnd: () => {},
-  onResult: () => {},
-  onUnsupported: () => {}
+  onEnd: () => {}
 };
 
 const SpeechSynthesis = (props) => {
-  const {
-    active,
-    text,
-    onUnsupported,
-    onEnd,
-    onVoicesLoaded,
-    voiceURI
-  } = props;
-  const [voices, setVoices] = useState(null);
-  const [voice, setVoice] = useState(null);
-
-  const getUtterance = () => {
-    // Firefox requires won't repeat an utterance that has been
-    // spoken, so we need to create a new instance each time
-    const utterance = new window.SpeechSynthesisUtterance();
-    utterance.text = text;
-    utterance.voice = voice;
-    utterance.onend = onEnd;
-    return utterance;
-  };
+  const { onEnd, children } = props;
+  const [voices, setVoices] = useState([]);
+  const [speaking, setSpeaking] = useState(false);
+  const supported = !!window.speechSynthesis;
 
   const processVoices = (voiceOptions) => {
     setVoices(voiceOptions);
-    onVoicesLoaded(voiceOptions);
   };
 
   const getVoices = () => {
@@ -63,31 +39,40 @@ const SpeechSynthesis = (props) => {
     };
   };
 
+  const handleEnd = () => {
+    setSpeaking(false);
+    onEnd();
+  };
+
   useEffect(() => {
-    if (!window.speechSynthesis) {
-      onUnsupported();
-      return;
+    if (supported) {
+      getVoices();
     }
-    getVoices();
   }, []);
 
-  // Change voice
-  useEffect(() => {
-    if (voices) {
-      const newVoice = voices.find(option => option.voiceURI === voiceURI);
-      setVoice(newVoice);
-    }
-  }, [voiceURI, voices]);
+  const speak = ({ text, voice }) => {
+    setSpeaking(true);
+    // Firefox won't repeat an utterance that has been
+    // spoken, so we need to create a new instance each time
+    const utterance = new window.SpeechSynthesisUtterance();
+    utterance.text = text;
+    utterance.voice = voice || null;
+    utterance.onend = handleEnd;
+    window.speechSynthesis.speak(utterance);
+  };
 
-  useEffect(() => {
-    if (active) {
-      window.speechSynthesis.speak(getUtterance());
-    } else {
-      window.speechSynthesis.cancel();
-    }
-  }, [active]);
+  const cancel = () => {
+    setSpeaking(false);
+    window.speechSynthesis.cancel();
+  };
 
-  return null;
+  return children({
+    supported,
+    speak,
+    speaking,
+    cancel,
+    voices
+  });
 };
 
 SpeechSynthesis.propTypes = propTypes;
