@@ -6,8 +6,8 @@ import {
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  onEnd: PropTypes.func,
-  children: PropTypes.func.isRequired
+  children: PropTypes.func.isRequired,
+  onEnd: PropTypes.func
 };
 
 const defaultProps = {

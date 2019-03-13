@@ -7,7 +7,7 @@ const Example = () => {
   const [voiceIndex, setVoiceIndex] = useState(null);
 
   const onEnd = () => {
-    // You could do whatever you wanted here after the message is read
+    // You could do whatever you wanted here after the message has been read
   };
 
   return (
@@ -43,7 +43,7 @@ const Example = () => {
                 <select
                   id="voice"
                   name="voice"
-                  value={voiceIndex}
+                  value={voiceIndex || ''}
                   onChange={(event) => { setVoiceIndex(event.target.value); }}
                 >
                   <option value="">Default</option>
