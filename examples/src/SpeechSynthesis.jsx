@@ -4,21 +4,32 @@ import { Container } from './shared';
 
 const Example = () => {
   const [text, setText] = useState('I am a robot');
-  const [voice, setVoice] = useState("");
+  const [voiceIndex, setVoiceIndex] = useState(null);
 
   const onEnd = () => {
-    console.log('done!')
+    // You could do whatever you wanted here after the message is read
   };
 
   return (
     <Container>
       <form>
         <h2>Speech Synthesis</h2>
-        <SpeechSynthesis>
-          {({ speak, cancel, speaking, supported, voices }) => {
-            if (!supported) return (
-              <p>Oh no, it looks like your browser doesn&#39;t support Speech Synthesis.</p>
-            );
+        <SpeechSynthesis onEnd={onEnd}>
+          {({
+            speak,
+            cancel,
+            speaking,
+            supported,
+            voices
+          }) => {
+            // Guard against unsupported browser first
+            if (!supported) {
+              return (
+                <p>Oh no, it looks like your browser doesn&#39;t support Speech Synthesis.</p>
+              );
+            }
+
+            const voice = voices[voiceIndex] || null;
 
             return (
               <React.Fragment>
@@ -32,12 +43,12 @@ const Example = () => {
                 <select
                   id="voice"
                   name="voice"
-                  value={voice}
-                  onChange={(event) => { setVoice(event.target.value); }}
+                  value={voiceIndex}
+                  onChange={(event) => { setVoiceIndex(event.target.value); }}
                 >
                   <option value="">Default</option>
-                  {voices.map(option => (
-                    <option key={option.voiceURI} value={option}>
+                  {voices.map((option, index) => (
+                    <option key={option.voiceURI} value={index}>
                       {`${option.lang} - ${option.name}`}
                     </option>
                   ))}
@@ -64,7 +75,7 @@ const Example = () => {
                   )
                 }
               </React.Fragment>
-            )
+            );
           }}
         </SpeechSynthesis>
       </form>
