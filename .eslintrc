@@ -3,6 +3,9 @@
     "document": true,
     "window": true,
   },
+  "env": {
+    "jest/globals": true
+  },
   "extends": "airbnb",
   "parser": "babel-eslint",
   "parserOptions": {
@@ -15,6 +18,7 @@
   },
   "plugins": [
     "babel",
+    "jest",
     "react"
   ],
   "rules": {
@@ -31,7 +35,7 @@
           "some": [ "nesting", "id" ]
       }
     }],
-    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["examples/src/*" ]}],
+    "import/no-extraneous-dependencies": ["error", { "devDependencies": ["examples/src/*", "**/*.spec.js", "**/*.spec.jsx"]}],
     "import/no-unresolved": ["error", { ignore: ["^react$"] }]
   }
 }

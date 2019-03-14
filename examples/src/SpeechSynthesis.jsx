@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { SpeechSynthesis } from '../../src';
 import { Container } from './shared';
 
-const Example = () => {
+const propTypes = {
+  onEnd: PropTypes.func
+};
+
+const defaultProps = {
+  onEnd: () => {}
+};
+
+const Example = ({ onEnd }) => {
   const [text, setText] = useState('I am a robot');
   const [voiceIndex, setVoiceIndex] = useState(null);
-
-  const onEnd = () => {
-    // You could do whatever you wanted here after the message has been read
-  };
 
   return (
     <Container>
@@ -82,5 +87,8 @@ const Example = () => {
     </Container>
   );
 };
+
+Example.propTypes = propTypes;
+Example.defaultProps = defaultProps;
 
 export default Example;
