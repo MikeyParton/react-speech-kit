@@ -3,7 +3,6 @@ import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import MockSynthesis from './mocks/MockSynthesis';
 import MockUtterance from './mocks/MockUtterance';
-import mockVoices from './mocks/mockVoices';
 import SpeechSynthesis from '../SpeechSynthesis';
 
 jest.useFakeTimers();
@@ -19,11 +18,11 @@ describe('SpeechSynthesis', () => {
   let wrapper;
 
   beforeEach(() => {
+    window.speechSynthesis = MockSynthesis;
+    window.SpeechSynthesisUtterance = MockUtterance;
     MockSynthesis.reset();
     jest.clearAllTimers();
     jest.clearAllMocks();
-    window.speechSynthesis = MockSynthesis;
-    window.SpeechSynthesisUtterance = MockUtterance;
     wrapper = mount(<Example />);
   });
 
@@ -36,8 +35,36 @@ describe('SpeechSynthesis', () => {
       expect(wrapper.find(TestComponent).props().speaking).toBe(false);
     });
 
-    it('passes voices from window.speechSynthesis.getVoices', () => {
-      expect(wrapper.find(TestComponent).props().voices).toEqual(mockVoices);
+    describe('when window.speechSynthesis.getVoices returns voices immediately', () => {
+      it('passes voices', () => {
+        expect(wrapper.find(TestComponent).props().voices).toEqual(MockSynthesis.mockVoices);
+      });
+    });
+
+    describe('when window.speechSynthesis.getVoices returns voices async', () => {
+      beforeEach(() => {
+        MockSynthesis.getVoices = () => {
+          setTimeout(() => {
+            MockSynthesis.getVoices = () => MockSynthesis.mockVoices;
+            MockSynthesis.onvoiceschanged({ target: MockSynthesis });
+          }, 500);
+          return [];
+        };
+
+        wrapper = mount(<Example />);
+      });
+
+      it('passes voices: [] at first', () => {
+        expect(wrapper.find(TestComponent).props().voices).toEqual([]);
+      });
+
+      it('passes voices when they load', () => {
+        act(() => {
+          jest.advanceTimersByTime(500);
+        });
+        wrapper.update();
+        expect(wrapper.find(TestComponent).props().voices).toEqual(MockSynthesis.mockVoices);
+      });
     });
   });
 
@@ -52,21 +79,19 @@ describe('SpeechSynthesis', () => {
     });
   });
 
-  describe('calling the provided speak prop function', () => {
+  describe('speak()', () => {
+    let args;
     beforeEach(() => {
       act(() => {
-        wrapper.find(TestComponent).props().speak({
-          text: 'Hello this is a test',
-          voice: 'test voice'
-        });
+        wrapper.find(TestComponent).props().speak(args);
       });
     });
 
-    it('calls window.speechSynthesis.speak with the correct text & voice args', () => {
+    it('calls window.speechSynthesis.speak with default args', () => {
       expect(MockSynthesis.speak.mock.calls.length).toBe(1);
-      const args = MockSynthesis.speak.mock.calls[0][0];
-      expect(args.text).toEqual('Hello this is a test');
-      expect(args.voice).toEqual('test voice');
+      const receivedArgs = MockSynthesis.speak.mock.calls[0][0];
+      expect(receivedArgs.text).toEqual('');
+      expect(receivedArgs.voice).toEqual(null);
     });
 
     it('passes speaking: true', () => {
@@ -82,9 +107,24 @@ describe('SpeechSynthesis', () => {
       expect(mockOnEnd.mock.calls.length).toBe(1);
       expect(wrapper.find(TestComponent).props().speaking).toBe(false);
     });
+
+    describe('passing args', () => {
+      beforeAll(() => {
+        args = {
+          text: 'Hello this is a test',
+          voice: 'test voice'
+        };
+      });
+
+      it('calls window.speechSynthesis.speak with provided args', () => {
+        const receivedArgs = MockSynthesis.speak.mock.calls[0][0];
+        expect(receivedArgs.text).toEqual('Hello this is a test');
+        expect(receivedArgs.voice).toEqual('test voice');
+      });
+    });
   });
 
-  describe('calling the provided cancel prop function', () => {
+  describe('cancel()', () => {
     describe('while speaking', () => {
       it('calls window.speechSynthesis.cancel and the onEnd prop, then passes speaking: false', () => {
         act(() => {
@@ -97,7 +137,6 @@ describe('SpeechSynthesis', () => {
           testComponent.props().cancel();
         });
 
-        wrapper.update();
         expect(MockSynthesis.cancel.mock.calls.length).toBe(1);
         expect(mockOnEnd.mock.calls.length).toBe(1);
         expect(wrapper.find(TestComponent).props().speaking).toBe(false);

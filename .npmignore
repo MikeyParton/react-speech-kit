@@ -1,5 +1,6 @@
 src
 examples
+coverage
 .babelrc
 .gitignore
 webpack.config.js

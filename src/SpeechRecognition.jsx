@@ -38,10 +38,12 @@ const SpeechRekognition = (props) => {
     onResult(transcript);
   };
 
-  const listen = ({
-    lang = '',
-    interimResults = true
-  }) => {
+  const listen = (args = {}) => {
+    if (listening) return;
+    const {
+      lang = '',
+      interimResults = true
+    } = args;
     setListening(true);
     recognition.current.lang = lang;
     recognition.current.interimResults = interimResults;
@@ -49,14 +51,12 @@ const SpeechRekognition = (props) => {
     // SpeechRecognition stops automatically after inactivity
     // We want it to keep going until we tell it to stop
     recognition.current.onend = () => recognition.current.start();
-    if (!listening) {
-      recognition.current.start();
-    }
+    recognition.current.start();
   };
 
   const stop = () => {
-    setListening(false);
     if (!listening) return;
+    setListening(false);
     recognition.current.onend = () => {};
     recognition.current.stop();
     onEnd();

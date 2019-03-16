@@ -1,8 +1,6 @@
-import mockVoices from './mockVoices';
-
-class MockSpeechSynthesis {
+class MockSynthesis {
   static getVoices() {
-    return mockVoices;
+    return this.mockVoices;
   }
 
   static reset() {
@@ -11,22 +9,30 @@ class MockSpeechSynthesis {
   }
 }
 
-MockSpeechSynthesis.speak = jest.fn((utterance) => {
+MockSynthesis.speak = jest.fn((utterance) => {
   // Save a reference to the utterance, so we can call its
   // onend when it is cancelled
-  MockSpeechSynthesis.utterance = utterance;
+  MockSynthesis.utterance = utterance;
   // Let's pretend it takes 500ms to finish speaking
   setTimeout(() => {
-    MockSpeechSynthesis.reset();
+    MockSynthesis.reset();
     utterance.onend();
   }, 500);
 });
 
-MockSpeechSynthesis.cancel = jest.fn(() => {
-  if (MockSpeechSynthesis.utterance) {
-    MockSpeechSynthesis.utterance.onend();
-    MockSpeechSynthesis.reset();
+MockSynthesis.cancel = jest.fn(() => {
+  if (MockSynthesis.utterance) {
+    MockSynthesis.utterance.onend();
+    MockSynthesis.reset();
   }
 });
 
-export default MockSpeechSynthesis;
+MockSynthesis.mockVoices = [{
+  default: true,
+  lang: 'en-AU',
+  localService: true,
+  name: 'Karen',
+  voiceURI: 'Karen'
+}];
+
+export default MockSynthesis;

@@ -1,7 +1,7 @@
-class MockSpeechSynthesisUtterance {
+class MockUtterance {
   constructor(text = '') {
     this.text = text;
   }
 }
 
-export default MockSpeechSynthesisUtterance;
+export default MockUtterance;
