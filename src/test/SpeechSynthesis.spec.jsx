@@ -1,112 +1,117 @@
 import React from 'react';
 import { mount } from 'enzyme';
+import { act } from 'react-dom/test-utils';
 import MockSynthesis from './mocks/MockSynthesis';
 import MockUtterance from './mocks/MockUtterance';
-import SpeechSynthesisExample from '../../examples/src/SpeechSynthesis';
+import mockVoices from './mocks/mockVoices';
 import SpeechSynthesis from '../SpeechSynthesis';
 
 jest.useFakeTimers();
 const mockOnEnd = jest.fn();
-window.speechSynthesis = MockSynthesis;
-window.SpeechSynthesisUtterance = MockUtterance;
-
-class TestComponent extends React.Component {
-  cancel() {
-    this.props.cancel();
-  }
-
-  speak() {
-    const { speak, text, voice } = this.props;
-    speak({ text, voice });
-  }
-
-  render() {
-    return null;
-  }
-}
-
-const Example = ({ onEnd }) => (
-  <SpeechSynthesis onEnd={onEnd}>
+const TestComponent = () => null;
+const Example = () => (
+  <SpeechSynthesis onEnd={mockOnEnd}>
     {props => <TestComponent {...props} />}
   </SpeechSynthesis>
 );
 
 describe('SpeechSynthesis', () => {
+  let wrapper;
+
   beforeEach(() => {
+    MockSynthesis.reset();
     jest.clearAllTimers();
     jest.clearAllMocks();
-  });
-
-  describe('when speechSynthesis is missing from the window', () => {
-    window.speechSynthesis = undefined;
-    const wrapper = mount(<Example onEnd={mockOnEnd} />);
-    const testComponent = wrapper.find(TestComponent);
-
-    it('passes supported false ', () => {
-      expect(testComponent.props().supported).toBe(false);
-    });
-  });
-
-  describe('when speechSynthesis is available', () => {
     window.speechSynthesis = MockSynthesis;
     window.SpeechSynthesisUtterance = MockUtterance;
-    const wrapper = mount(<Example onEnd={mockOnEnd} />);
-    const testComponent = wrapper.find(TestComponent);
+    wrapper = mount(<Example />);
+  });
 
-    it('passes supported true ', () => {
-      expect(testComponent.props().supported).toBe(true);
+  describe('initial props', () => {
+    it('passes supported: true ', () => {
+      expect(wrapper.find(TestComponent).props().supported).toBe(true);
     });
 
-    describe('calling the provided speak prop function', () => {
-      testComponent.props().speak({
-        text: 'Hello this is a test',
-        voice: 'test voice'
+    it('passes speaking: false', () => {
+      expect(wrapper.find(TestComponent).props().speaking).toBe(false);
+    });
+
+    it('passes voices from window.speechSynthesis.getVoices', () => {
+      expect(wrapper.find(TestComponent).props().voices).toEqual(mockVoices);
+    });
+  });
+
+  describe('when speechSynthesis is unsupported', () => {
+    beforeEach(() => {
+      window.speechSynthesis = undefined;
+      wrapper = mount(<Example />);
+    });
+
+    it('passes supported: false ', () => {
+      expect(wrapper.find(TestComponent).props().supported).toBe(false);
+    });
+  });
+
+  describe('calling the provided speak prop function', () => {
+    beforeEach(() => {
+      act(() => {
+        wrapper.find(TestComponent).props().speak({
+          text: 'Hello this is a test',
+          voice: 'test voice'
+        });
       });
+    });
+
+    it('calls window.speechSynthesis.speak with the correct text & voice args', () => {
       expect(MockSynthesis.speak.mock.calls.length).toBe(1);
       const args = MockSynthesis.speak.mock.calls[0][0];
       expect(args.text).toEqual('Hello this is a test');
       expect(args.voice).toEqual('test voice');
     });
+
+    it('passes speaking: true', () => {
+      wrapper.update();
+      expect(wrapper.find(TestComponent).props().speaking).toBe(true);
+    });
+
+    it('passes speaking: false and calls the provided onEnd prop when finished', () => {
+      act(() => {
+        jest.advanceTimersByTime(500);
+      });
+      wrapper.update();
+      expect(mockOnEnd.mock.calls.length).toBe(1);
+      expect(wrapper.find(TestComponent).props().speaking).toBe(false);
+    });
   });
 
-  test('calling speak calls speak on the SpeechSynthesis', () => {
-    const wrapper = mount(<SpeechSynthesisExample onEnd={mockOnEnd} />);
-    wrapper.find('button').simulate('click');
-    expect(MockSynthesis.speak.mock.calls.length).toBe(1);
-  });
+  describe('calling the provided cancel prop function', () => {
+    describe('while speaking', () => {
+      it('calls window.speechSynthesis.cancel and the onEnd prop, then passes speaking: false', () => {
+        act(() => {
+          const testComponent = wrapper.find(TestComponent);
+          testComponent.props().speak({
+            text: 'Hello this is a test',
+            voice: 'test voice'
+          });
+          jest.advanceTimersByTime(250);
+          testComponent.props().cancel();
+        });
 
-  test('the text prop is passed correctly to SpeechSynthesis', () => {
-    const wrapper = mount(<SpeechSynthesisExample onEnd={mockOnEnd} />);
-    wrapper.find('textarea').simulate('change', { target: { value: 'Hello' } });
-    wrapper.find('button').simulate('click');
-    expect(MockSynthesis.speak.mock.calls[0][0].text).toEqual('Hello');
-  });
+        wrapper.update();
+        expect(MockSynthesis.cancel.mock.calls.length).toBe(1);
+        expect(mockOnEnd.mock.calls.length).toBe(1);
+        expect(wrapper.find(TestComponent).props().speaking).toBe(false);
+      });
+    });
 
-  test('the voice prop is passed correctly to SpeechSynthesis', () => {
-    const wrapper = mount(<SpeechSynthesisExample />);
-    wrapper.find('select').simulate('change', { target: { value: 0 } });
-    wrapper.find('button').simulate('click');
-    expect(MockSynthesis.speak.mock.calls[0][0].voice.voiceURI).toEqual('Karen');
-  });
-
-  test('once SpeechSynthesis is done speaking it calls the onEnd prop', () => {
-    const wrapper = mount(<SpeechSynthesisExample onEnd={mockOnEnd} />);
-    wrapper.find('button').simulate('click');
-    jest.advanceTimersByTime(500);
-    expect(mockOnEnd.mock.calls.length).toBe(1);
-  });
-
-  test('calling cancel before it finishes also calls the onEnd prop', () => {
-    const wrapper = mount(<SpeechSynthesisExample onEnd={mockOnEnd} />);
-    const toggleButton = wrapper.find('button');
-    toggleButton.simulate('click');
-
-    // At this point, we're only halfway through reading the text
-    jest.advanceTimersByTime(250);
-    expect(mockOnEnd.mock.calls.length).toBe(0);
-
-    toggleButton.simulate('click');
-    expect(MockSynthesis.cancel.mock.calls.length).toBe(1);
-    expect(mockOnEnd.mock.calls.length).toBe(1);
+    describe('while not speaking', () => {
+      it('calls window.speechSynthesis.cancel, but does not call the onEnd prop', () => {
+        act(() => {
+          wrapper.find(TestComponent).props().cancel();
+        });
+        expect(MockSynthesis.cancel.mock.calls.length).toBe(1);
+        expect(mockOnEnd.mock.calls.length).toBe(0);
+      });
+    });
   });
 });
