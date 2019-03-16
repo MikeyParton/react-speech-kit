@@ -1,4 +1,4 @@
-# react-speech-kit 🎤
+# react-speech-kit 🎤&nbsp;&nbsp; [![CircleCI](https://circleci.com/gh/MikeyParton/react-speech-kit/tree/master.svg?style=shield)](https://circleci.com/gh/MikeyParton/react-speech-kit/tree/master)
 React components for in-browser Speech Recognition and Speech Synthesis.
 [Demo here](https://mikeyparton.github.io/react-speech-kit/)
 
