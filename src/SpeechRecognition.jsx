@@ -7,30 +7,24 @@ import {
 import PropTypes from 'prop-types';
 
 const propTypes = {
-  active: PropTypes.bool.isRequired,
-  interimResults: PropTypes.bool,
-  lang: PropTypes.string,
+  children: PropTypes.func.isRequired,
   onEnd: PropTypes.func,
-  onResult: PropTypes.func,
-  onUnsupported: PropTypes.func
+  onResult: PropTypes.func
 };
 
 const defaultProps = {
-  interimResults: true,
-  lang: '',
   onEnd: () => {},
-  onResult: () => {},
-  onUnsupported: () => {}
+  onResult: () => {}
 };
+
+window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
 const SpeechRekognition = (props) => {
   const recognition = useRef(null);
-  const [started, setStarted] = useState(false);
+  const [listening, setListening] = useState(false);
+  const supported = !!window.SpeechRecognition;
   const {
-    active,
-    interimResults,
-    lang,
-    onUnsupported,
+    children,
     onEnd,
     onResult
   } = props;
@@ -44,63 +38,44 @@ const SpeechRekognition = (props) => {
     onResult(transcript);
   };
 
-  const start = () => {
+  const listen = (args = {}) => {
+    if (listening) return;
+    const {
+      lang = '',
+      interimResults = true
+    } = args;
+    setListening(true);
+    recognition.current.lang = lang;
+    recognition.current.interimResults = interimResults;
     recognition.current.onresult = processResult;
     // SpeechRecognition stops automatically after inactivity
     // We want it to keep going until we tell it to stop
     recognition.current.onend = () => recognition.current.start();
-    if (!started) {
-      recognition.current.start();
-      setStarted(true);
-    }
+    recognition.current.start();
   };
 
   const stop = () => {
-    if (!started) return;
+    if (!listening) return;
+    setListening(false);
     recognition.current.onend = () => {};
     recognition.current.stop();
-    setStarted(false);
     onEnd();
   };
 
   useEffect(() => {
-    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!window.SpeechRecognition) {
-      onUnsupported();
-      return;
-    }
-
+    if (!supported) return;
     recognition.current = new window.SpeechRecognition();
   }, []);
 
-  // Start and stop listening
-  useEffect(() => {
-    if (!recognition.current) return;
-    if (active) {
-      start();
-    } else {
-      stop();
-    }
-  }, [active]);
-
-  // Update language
-  useEffect(() => {
-    if (!recognition.current) return;
-    recognition.current.lang = lang;
-  }, [lang]);
-
-  // Update interimResults
-  useEffect(() => {
-    if (!recognition.current) return;
-    recognition.current.interimResults = interimResults;
-  }, [interimResults]);
-
-  return null;
+  return children({
+    listen,
+    listening,
+    stop,
+    supported
+  });
 };
-
-const areEqual = (prevProps, nextProps) => ['active', 'lang', 'interimResults'].every(key => prevProps[key] === nextProps[key]);
 
 SpeechRekognition.propTypes = propTypes;
 SpeechRekognition.defaultProps = defaultProps;
 
-export default memo(SpeechRekognition, areEqual);
+export default memo(SpeechRekognition);

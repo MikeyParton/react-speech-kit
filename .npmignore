@@ -1,6 +1,18 @@
+# Logs
+*.log
+
+# Development files
 src
 examples
-.babelrc
+
+# Test
+coverage
+test
+
+# Config
 .gitignore
+.babelrc
 webpack.config.js
-.DS_Store
+.circleci
+jest.setup.js
+.eslintrc
