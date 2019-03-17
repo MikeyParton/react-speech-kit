@@ -3,7 +3,7 @@ import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import MockSynthesis from './mocks/MockSynthesis';
 import MockUtterance from './mocks/MockUtterance';
-import SpeechSynthesis from '../SpeechSynthesis';
+import SpeechSynthesis from '../src/SpeechSynthesis';
 
 jest.useFakeTimers();
 const mockOnEnd = jest.fn();

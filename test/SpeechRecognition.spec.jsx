@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import MockRecognition from './mocks/MockRecognition';
-import SpeechRecognition from '../SpeechRecognition';
+import SpeechRecognition from '../src/SpeechRecognition';
 
 jest.useFakeTimers();
 const mockOnEnd = jest.fn();
