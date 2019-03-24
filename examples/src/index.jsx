@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
-import SpeechSynthesisExample from './SpeechSynthesis';
-import SpeechRecognitionExample from './SpeechRecognition';
+import SpeechSynthesisExample from './useSpeechSynthesis';
+import SpeechRecognitionExample from './useSpeechRecognition';
 import {
   GlobalStyles,
   Row,

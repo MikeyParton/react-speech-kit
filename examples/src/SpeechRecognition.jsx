@@ -3,10 +3,16 @@ import { SpeechRecognition } from '../../src';
 import { Container } from './shared';
 
 const languageOptions = [
-  { label: 'English', value: 'en-AU' },
-  { label: 'Spanish', value: 'es-CL' },
-  { label: 'Persian', value: 'fa-IR' },
   { label: 'Cambodian', value: 'km-KH' },
+  { label: 'Deutsch', value: 'de-DE' },
+  { label: 'English', value: 'en-AU' },
+  { label: 'Farsi', value: 'fa-IR' },
+  { label: 'Français', value: 'fr-FR' },
+  { label: 'Italiano', value: 'it-IT' },
+  { label: '普通话 (中国大陆) - Mandarin', value: 'zh' },
+  { label: 'Portuguese', value: 'pt-BR' },
+  { label: 'Español', value: 'es-MX' },
+  { label: 'Svenska - Swedish', value: 'sv-SE' }
 ];
 
 const Example = () => {
