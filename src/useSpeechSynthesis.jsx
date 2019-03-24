@@ -3,7 +3,7 @@ import {
   useState
 } from 'react';
 
-const useSpeechSynthesis = (props) => {
+const useSpeechSynthesis = (props = {}) => {
   const { onEnd = () => {} } = props;
   const [voices, setVoices] = useState([]);
   const [speaking, setSpeaking] = useState(false);
