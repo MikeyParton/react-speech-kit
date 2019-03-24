@@ -1,6 +1,6 @@
 {
   "name": "react-speech-kit",
-  "version": "2.0.0",
+  "version": "2.0.1-beta.0",
   "description": "React components for in-browser Speech Recognition and Speech Synthesis.",
   "main": "dist/index.js",
   "scripts": {
