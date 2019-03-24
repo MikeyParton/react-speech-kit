@@ -2,18 +2,9 @@ import {
   useEffect,
   useState
 } from 'react';
-import PropTypes from 'prop-types';
-
-const propTypes = {
-  onEnd: PropTypes.func
-};
-
-const defaultProps = {
-  onEnd: () => {}
-};
 
 const useSpeechSynthesis = (props) => {
-  const { onEnd } = props;
+  const { onEnd = () => {} } = props;
   const [voices, setVoices] = useState([]);
   const [speaking, setSpeaking] = useState(false);
   const supported = !!window.speechSynthesis;
@@ -73,8 +64,5 @@ const useSpeechSynthesis = (props) => {
     voices
   };
 };
-
-useSpeechSynthesis.propTypes = propTypes;
-useSpeechSynthesis.defaultProps = defaultProps;
 
 export default useSpeechSynthesis;

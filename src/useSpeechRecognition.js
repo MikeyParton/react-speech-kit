@@ -3,26 +3,14 @@ import {
   useEffect,
   useState
 } from 'react';
-import PropTypes from 'prop-types';
-
-const propTypes = {
-  onEnd: PropTypes.func,
-  onResult: PropTypes.func
-};
-
-const defaultProps = {
-  onEnd: () => {},
-  onResult: () => {}
-};
 
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-const useSpeechRecognition = (props) => {
+const useSpeechRecognition = (props = {}) => {
   const {
-    onEnd,
-    onResult
+    onEnd = () => {},
+    onResult = () => {}
   } = props;
-
   const recognition = useRef(null);
   const [listening, setListening] = useState(false);
   const supported = !!window.SpeechRecognition;
@@ -38,10 +26,7 @@ const useSpeechRecognition = (props) => {
 
   const listen = (args = {}) => {
     if (listening) return;
-    const {
-      lang = '',
-      interimResults = true
-    } = args;
+    const { lang = '', interimResults = true } = args;
     setListening(true);
     recognition.current.lang = lang;
     recognition.current.interimResults = interimResults;
@@ -54,8 +39,9 @@ const useSpeechRecognition = (props) => {
 
   const stop = () => {
     if (!listening) return;
-    setListening(false);
+    recognition.current.onresult = () => {};
     recognition.current.onend = () => {};
+    setListening(false);
     recognition.current.stop();
     onEnd();
   };
@@ -72,8 +58,5 @@ const useSpeechRecognition = (props) => {
     supported
   };
 };
-
-useSpeechRecognition.propTypes = propTypes;
-useSpeechRecognition.defaultProps = defaultProps;
 
 export default useSpeechRecognition;
