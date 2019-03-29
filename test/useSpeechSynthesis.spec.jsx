@@ -1,14 +1,15 @@
 import React from 'react';
-import SpeechSynthesis from '../src/SpeechSynthesis';
+import useSpeechSynthesis from '../src/useSpeechSynthesis';
 import runTests from './shared/speechSynthesisTests';
 
 const mockOnEnd = jest.fn();
 const TestComponent = () => null;
-const Example = () => (
-  <SpeechSynthesis onEnd={mockOnEnd}>
-    {props => <TestComponent {...props} />}
-  </SpeechSynthesis>
-);
+const Example = () => {
+  const props = useSpeechSynthesis({ onEnd: mockOnEnd });
+  return (
+    <TestComponent {...props} />
+  );
+};
 
 runTests({
   Example,

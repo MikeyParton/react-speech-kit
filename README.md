@@ -1,17 +1,20 @@
 # react-speech-kit 🎤&nbsp;&nbsp;&nbsp;&nbsp;[![CircleCI](https://circleci.com/gh/MikeyParton/react-speech-kit/tree/master.svg?style=shield)](https://circleci.com/gh/MikeyParton/react-speech-kit/tree/master) [![codecov](https://codecov.io/gh/MikeyParton/react-speech-kit/branch/master/graph/badge.svg)](https://codecov.io/gh/MikeyParton/react-speech-kit)
-React components for in-browser Speech Recognition and Speech Synthesis.
+React hooks for in-browser Speech Recognition and Speech Synthesis.
 [Demo here](https://mikeyparton.github.io/react-speech-kit/)
 
 ## Table of Contents
 
 - [Install](#install)
 - [Examples and Demo](#examples-and-demo)
-- [SpeechSynthesis](#speechsynthesis)
-  - [Props](#props)
-  - [Render prop args](#render-prop-args)
-- [SpeechRecognition](#speechrecognition)
-  - [Props](#props-1)
-  - [Render prop args](#render-prop-args-1)
+- [useSpeechSynthesis](#usespeechsynthesis)
+  - [Usage](#usage)
+  - [Args](#args)
+  - [Returns](#returns)
+- [useSpeechRecognition](#usespeechrecognition)
+  - [Usage](#usage-1)
+  - [Args](#args-1)
+  - [Returns](#returns-1)
+- [Don't want to use hooks yet?](#dont-want-to-use-hooks-yet)
 
 ## Install
 ```bash
@@ -21,27 +24,44 @@ yarn add react-speech-kit
 ## Examples and Demo
 A full example can be found [here](https://mikeyparton.github.io/react-speech-kit/). The source code is in the [examples directory](https://github.com/MikeyParton/react-speech-kit/tree/master/examples/src).
 
-## SpeechSynthesis
-A react wrapper for the browser's [SpeechSynthesis API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis). It doesn't render anything itself, it just exposes the options and controls to the underlying SpeechSynthesis in the browser. You can use the children render prop to use these however you like.
+## useSpeechSynthesis
+A react hook for the browser's [SpeechSynthesis API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis). It exposes the options and controls to the underlying SpeechSynthesis in the browser.
 
-### Props
+### Usage
+```jsx
+import React, { useState } from "react";
+import { useSpeechSynthesis } from "react-speech-kit";
+
+function Example() {
+  const [value, setValue] = useState("");
+  const { speak } = useSpeechSynthesis();
+
+  return (
+    <div>
+      <textarea
+        value={value}
+        onChange={event => setValue(event.target.value)}
+      />
+      <button onClick={() => speak({ text: value })}>Speak</button>
+    </div>
+  );
+}
+```
+
+### Args
 
 #### onEnd
-`function()`
+`function()` _optional_
 
 Called when SpeechSynthesis finishes reading the text or is cancelled. It is called with no argumnents. Very useful for triggering a state change after something has been read.
 
-#### children
-`function({ Render prop args })` _(required)_
-
-Render prop function to consume the arguments from SpeechSynthesis and render your own controls. It is called with an object containing render prop args.
-
-### Render prop args
+### Returns
+useSpeechSynthesis returns an object which contains the following:
 
 #### speak
 `function({ text: string, voice: SpeechSynthesisVoice })`
 
-Call to make the browser read some text. You can change the voice by passing an available SpeechSynthesisVoice (provided in the voices prop). Note that some browsers require a direct user action to start using SpeechSynthesis. To make sure it works, it is recommended that you call speak for the first time in a click event handler.
+Call to make the browser read some text. You can change the voice by passing an available SpeechSynthesisVoice (from the voices array). Note that some browsers require a direct user action initiate SpeechSynthesis. To make sure it works, it is recommended that you call speak for the first time in a click event handler.
 
 #### cancel
 `function()`
@@ -71,12 +91,40 @@ An array of available voices which can be passed to the speak function. An examp
   voiceURI: "Karen"
 }
 ```
-In some browsers voices load asynchronously. In these cases, the array will be empty until they are available. To manage the selected voice, you should store the index of the voice you would like to use in state.
+In some browsers voices load asynchronously. In these cases, the array will be empty until they are available.
 
-## SpeechRecognition
-A react wrapper for the browser's [SpeechRecognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition). Again, it doesn't render anything itself, it just exposes the options and controls to the underlying SpeechRecognition in the browser. You can use the children render prop to use these however you like.
+## useSpeechRecognition
+A react hook for the browser's [SpeechRecognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
 
-### Props
+### Usage
+```jsx
+import React, { useState } from "react";
+import { useSpeechRecognition } from "react-speech-kit";
+
+function Example() {
+  const [value, setValue] = useState("");
+  const { listen, listening, stop } = useSpeechRecognition({
+    onResult: result => {
+      setValue(result);
+    }
+  });
+
+  return (
+    <div>
+      <textarea
+        value={value}
+        onChange={event => setValue(event.target.value)}
+      />
+      <button onMouseDown={listen} onMouseUp={stop}>
+        🎤
+      </button>
+      {listening && <div>Go ahead I'm listening</div>}
+    </div>
+  );
+}
+```
+
+### Args
 
 #### onEnd
 `function()`
@@ -88,12 +136,8 @@ Called when SpeechRecognition stops listening.
 
 Called when SpeechRecognition has a result. It is called with a string containing a transcript of the recognized speech.
 
-#### children
-`function({ Render prop args })` _(required)_
-
-Render prop function to consume the arguments from SpeechRecognition and render your own controls. It is called with an object containing the following values.
-
-### Render prop args
+### Returns
+useSpeechRecognition returns an object which contains the following:
 
 #### listen
 `function({ interimResults: boolean, lang: string })`
@@ -122,3 +166,6 @@ True when SpeechRecognition is actively listening.
 `boolean`
 
 Will be true if the browser supports SpeechRecognition. Keep this in mind and use this as a guard before rendering any control that allow a user to call listen.
+
+## Don't want to use hooks yet?
+You can import the `SpeechRecognition` and `SpeechSynthesis` components from version 1 which work exactly the same way but use render props to expose the controls. Examples of implementation are in the in the [examples directory](https://github.com/MikeyParton/react-speech-kit/tree/master/examples/src).
