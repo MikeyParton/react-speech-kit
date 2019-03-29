@@ -28,7 +28,7 @@ A full example can be found [here](https://mikeyparton.github.io/react-speech-ki
 A react hook for the browser's [SpeechSynthesis API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechSynthesis). It exposes the options and controls to the underlying SpeechSynthesis in the browser.
 
 ### Usage
-```
+```jsx
 import React, { useState } from "react";
 import { useSpeechSynthesis } from "react-speech-kit";
 
@@ -97,7 +97,7 @@ In some browsers voices load asynchronously. In these cases, the array will be e
 A react hook for the browser's [SpeechRecognition API](https://developer.mozilla.org/en-US/docs/Web/API/SpeechRecognition).
 
 ### Usage
-```
+```jsx
 import React, { useState } from "react";
 import { useSpeechRecognition } from "react-speech-kit";
 
