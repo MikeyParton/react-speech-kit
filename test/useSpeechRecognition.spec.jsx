@@ -1,15 +1,20 @@
 import React from 'react';
-import SpeechRecognition from '../src/SpeechRecognition';
+import useSpeechRecognition from '../src/useSpeechRecognition';
 import runTests from './shared/speechRecognitionTests';
 
 const mockOnEnd = jest.fn();
 const mockOnResult = jest.fn();
 const TestComponent = () => null;
-const Example = () => (
-  <SpeechRecognition onEnd={mockOnEnd} onResult={mockOnResult}>
-    {props => <TestComponent {...props} />}
-  </SpeechRecognition>
-);
+const Example = () => {
+  const props = useSpeechRecognition({
+    onResult: mockOnResult,
+    onEnd: mockOnEnd
+  });
+
+  return (
+    <TestComponent {...props} />
+  );
+};
 
 runTests({
   Example,
