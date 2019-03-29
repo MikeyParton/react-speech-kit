@@ -14,7 +14,7 @@ React hooks for in-browser Speech Recognition and Speech Synthesis.
   - [Usage](#usage-1)
   - [Args](#args-1)
   - [Returns](#returns-1)
-  - [Don't want to use hooks yet?](#dont-want-to-use-hooks-yet)
+- [Don't want to use hooks yet?](#dont-want-to-use-hooks-yet)
 
 ## Install
 ```bash
@@ -167,5 +167,5 @@ True when SpeechRecognition is actively listening.
 
 Will be true if the browser supports SpeechRecognition. Keep this in mind and use this as a guard before rendering any control that allow a user to call listen.
 
-### Don't want to use hooks yet?
+## Don't want to use hooks yet?
 You can import the `SpeechRecognition` and `SpeechSynthesis` components from version 1 which work exactly the same way but use render props to expose the controls. Examples of implementation are in the in the [examples directory](https://github.com/MikeyParton/react-speech-kit/tree/master/examples/src).
