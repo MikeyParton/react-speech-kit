@@ -4,6 +4,8 @@ import { Container } from './shared';
 
 const Example = () => {
   const [text, setText] = useState('I am a robot');
+  const [pitch, setPitch] = useState(1);
+  const [rate, setRate] = useState(1);
   const [voiceIndex, setVoiceIndex] = useState(null);
   const onEnd = () => {
     // You could do something here after speaking has finished
@@ -17,6 +19,9 @@ const Example = () => {
   } = useSpeechSynthesis({ onEnd });
 
   const voice = voices[voiceIndex] || null;
+
+  const styleFlexRow = { display: 'flex', flexDirection: 'row' };
+  const styleContainerRatePitch = { display: 'flex', flexDirection: 'column', marginBottom: 12 };
 
   return (
     <Container>
@@ -47,6 +52,40 @@ const Example = () => {
                 </option>
               ))}
             </select>
+            <div style={styleContainerRatePitch}>
+              <div style={styleFlexRow}>
+                <label htmlFor="rate">Rate: </label>
+                <div className="rate-value">{rate}</div>
+              </div>
+              <input
+                type="range"
+                min="0.5"
+                max="2"
+                defaultValue="1"
+                step="0.1"
+                id="rate"
+                onChange={(event) => {
+                  setRate(event.target.value);
+                }}
+              />
+            </div>
+            <div style={styleContainerRatePitch}>
+              <div style={styleFlexRow}>
+                <label htmlFor="pitch">Pitch: </label>
+                <div className="pitch-value">{pitch}</div>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="2"
+                defaultValue="1"
+                step="0.1"
+                id="pitch"
+                onChange={(event) => {
+                  setPitch(event.target.value);
+                }}
+              />
+            </div>
             <label htmlFor="message">
               Message
             </label>
@@ -63,7 +102,7 @@ const Example = () => {
                   Stop
                 </button>
               ) : (
-                <button type="button" onClick={() => speak({ text, voice })}>
+                <button type="button" onClick={() => speak({ text, voice, rate, pitch })}>
                   Speak
                 </button>
               )

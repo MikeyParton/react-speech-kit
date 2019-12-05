@@ -51,7 +51,7 @@ const SpeechSynthesis = (props) => {
   }, []);
 
   const speak = (args = {}) => {
-    const { voice = null, text = '' } = args;
+    const { voice = null, text = '', rate = 1, pitch = 1 } = args;
     setSpeaking(true);
     // Firefox won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
@@ -59,6 +59,8 @@ const SpeechSynthesis = (props) => {
     utterance.text = text;
     utterance.voice = voice;
     utterance.onend = handleEnd;
+    utterance.rate = rate;
+    utterance.pitch = pitch;
     window.speechSynthesis.speak(utterance);
   };
 
