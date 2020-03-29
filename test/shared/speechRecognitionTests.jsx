@@ -7,7 +7,8 @@ const SpeechRecognitionTests = ({
   Example,
   TestComponent,
   mockOnResult,
-  mockOnEnd
+  mockOnEnd,
+  mockOnError
 }) => {
   jest.useFakeTimers();
 
