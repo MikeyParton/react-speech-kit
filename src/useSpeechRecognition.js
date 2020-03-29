@@ -9,7 +9,8 @@ window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecogn
 const useSpeechRecognition = (props = {}) => {
   const {
     onEnd = () => {},
-    onResult = () => {}
+    onResult = () => {},
+    onError = () => {}
   } = props;
   const recognition = useRef(null);
   const [listening, setListening] = useState(false);
@@ -24,6 +25,14 @@ const useSpeechRecognition = (props = {}) => {
     onResult(transcript);
   };
 
+  const handleError = (event) => {
+    if (event.error === "not-allowed") {
+        //this prevents an infinite loop of error handling:
+        recognition.current = new window.SpeechRecognition();  
+    }
+    onError(event);
+  }
+
   const listen = (args = {}) => {
     if (listening) return;
     const {
@@ -33,6 +42,7 @@ const useSpeechRecognition = (props = {}) => {
     recognition.current.lang = lang;
     recognition.current.interimResults = interimResults;
     recognition.current.onresult = processResult;
+    recognition.current.onerror = handleError;
     recognition.current.continuous = continuous;
     recognition.current.maxAlternatives = maxAlternatives;
     if (grammars) {
@@ -48,6 +58,7 @@ const useSpeechRecognition = (props = {}) => {
     if (!listening) return;
     recognition.current.onresult = () => {};
     recognition.current.onend = () => {};
+    recognition.current.onerror = () => {};
     setListening(false);
     recognition.current.stop();
     onEnd();
