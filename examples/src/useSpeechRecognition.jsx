@@ -31,12 +31,18 @@ const Example = () => {
     setLang(event.target.value);
   };
 
+  const onError = (event) => {
+    if(event.error === "not-allowed") {
+      console.log("Browser blocked microphone for this site");
+    }
+  }
+
   const {
     listen,
     listening,
     stop,
     supported
-  } = useSpeechRecognition({ onResult, onEnd });
+  } = useSpeechRecognition({ onResult, onEnd, onError });
 
   const toggle = listening
     ? stop

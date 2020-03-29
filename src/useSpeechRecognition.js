@@ -26,12 +26,12 @@ const useSpeechRecognition = (props = {}) => {
   };
 
   const handleError = (event) => {
-    if (event.error === "not-allowed") {
-        //this prevents an infinite loop of error handling:
-        recognition.current = new window.SpeechRecognition();  
+    if (event.error === 'not-allowed') {
+      recognition.current.onend = () => {};
+      setListening(false);
     }
     onError(event);
-  }
+  };
 
   const listen = (args = {}) => {
     if (listening) return;
