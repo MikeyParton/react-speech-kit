@@ -18,6 +18,7 @@ const languageOptions = [
 const Example = () => {
   const [lang, setLang] = useState('en-AU');
   const [value, setValue] = useState('');
+  const [blocked, setBlocked] = useState(false);
 
   const onEnd = () => {
     // You could do something here after listening has finished
@@ -32,10 +33,10 @@ const Example = () => {
   };
 
   const onError = (event) => {
-    if(event.error === "not-allowed") {
-      console.log("Browser blocked microphone for this site");
+    if (event.error === 'not-allowed') {
+      setBlocked(true);
     }
-  }
+  };
 
   const {
     listen,
@@ -46,7 +47,10 @@ const Example = () => {
 
   const toggle = listening
     ? stop
-    : () => listen({ lang });
+    : () => {
+      setBlocked(false);
+      listen({ lang });
+    };
 
   return (
     <Container>
@@ -89,6 +93,7 @@ const Example = () => {
             <button type="button" onClick={toggle}>
               {listening ? 'Stop' : 'Listen'}
             </button>
+            {blocked && <p style={{ color: 'red' }}>The microphone is blocked for this site in your browser.</p>}
           </React.Fragment>
         )}
       </form>

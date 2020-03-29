@@ -2,18 +2,24 @@ class MockRecognition {
   constructor() {
     this.onresult = () => {};
     this.onend = () => {};
+    this.onerror = () => {};
     this.start = () => {
-      // By calling startMock with the current settings,
-      // we can test that they were updated correctly
-      MockRecognition.start({
-        lang: this.lang,
-        interimResults: this.interimResults
-      });
+      try {
+        // By calling startMock with the current settings,
+        // we can test that they were updated correctly
+        MockRecognition.start({
+          lang: this.lang,
+          interimResults: this.interimResults
+        });
 
-      setTimeout(() => {
-        this.onresult(MockRecognition.mockResult);
-        this.onend();
-      }, 500);
+        setTimeout(() => {
+          this.onresult(MockRecognition.mockResult);
+          this.onend();
+        }, 500);
+      }
+      catch (err) {
+        this.onerror(err);
+      }
     };
 
     this.stop = () => {

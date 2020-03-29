@@ -4,6 +4,7 @@ import runTests from './shared/speechRecognitionTests';
 
 const mockOnEnd = jest.fn();
 const mockOnResult = jest.fn();
+const mockOnError = jest.fn();
 const TestComponent = () => null;
 const Example = () => (
   <SpeechRecognition onEnd={mockOnEnd} onResult={mockOnResult}>
@@ -15,5 +16,6 @@ runTests({
   Example,
   TestComponent,
   mockOnResult,
-  mockOnEnd
+  mockOnEnd,
+  mockOnError
 });
