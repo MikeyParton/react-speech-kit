@@ -18,6 +18,7 @@ const languageOptions = [
 const Example = () => {
   const [lang, setLang] = useState('en-AU');
   const [value, setValue] = useState('');
+  const [blocked, setBlocked] = useState(false);
 
   const onEnd = () => {
     // You could do something here after listening has finished
@@ -31,16 +32,25 @@ const Example = () => {
     setLang(event.target.value);
   };
 
+  const onError = (event) => {
+    if (event.error === 'not-allowed') {
+      setBlocked(true);
+    }
+  };
+
   const {
     listen,
     listening,
     stop,
     supported
-  } = useSpeechRecognition({ onResult, onEnd });
+  } = useSpeechRecognition({ onResult, onEnd, onError });
 
   const toggle = listening
     ? stop
-    : () => listen({ lang });
+    : () => {
+      setBlocked(false);
+      listen({ lang });
+    };
 
   return (
     <Container>
@@ -80,9 +90,10 @@ const Example = () => {
               rows={3}
               disabled
             />
-            <button type="button" onClick={toggle}>
+            <button disabled={blocked} type="button" onClick={toggle}>
               {listening ? 'Stop' : 'Listen'}
             </button>
+            {blocked && <p style={{ color: 'red' }}>The microphone is blocked for this site in your browser.</p>}
           </React.Fragment>
         )}
       </form>

@@ -7,7 +7,8 @@ const SpeechRecognitionTests = ({
   Example,
   TestComponent,
   mockOnResult,
-  mockOnEnd
+  mockOnEnd,
+  mockOnError
 }) => {
   jest.useFakeTimers();
 
@@ -88,6 +89,16 @@ const SpeechRecognitionTests = ({
           const receivedArgs = MockRecognition.start.mock.calls[0][0];
           expect(receivedArgs.lang).toEqual('en-US');
           expect(receivedArgs.interimResults).toBe(false);
+        });
+      });
+
+      describe('when the user blocks permission', () => {
+        beforeAll(() => {
+          MockRecognition.start = jest.fn(() => { throw new Error('not allowed'); });
+        });
+
+        it('calls the onError function', () => {
+          expect(mockOnError.mock.calls.length).toBe(1);
         });
       });
 
