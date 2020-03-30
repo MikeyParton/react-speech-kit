@@ -7,7 +7,11 @@ const mockOnResult = jest.fn();
 const mockOnError = jest.fn();
 const TestComponent = () => null;
 const Example = () => (
-  <SpeechRecognition onEnd={mockOnEnd} onResult={mockOnResult}>
+  <SpeechRecognition
+    onEnd={mockOnEnd}
+    onResult={mockOnResult}
+    onError={mockOnError}
+  >
     {props => <TestComponent {...props} />}
   </SpeechRecognition>
 );

@@ -96,7 +96,7 @@ const SpeechRecognitionTests = ({
         beforeAll(() => {
           MockRecognition.start = jest.fn(() => { throw new Error('not allowed'); });
         });
-        
+
         it('calls the onError function', () => {
           expect(mockOnError.mock.calls.length).toBe(1);
         });

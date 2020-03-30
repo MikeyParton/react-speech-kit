@@ -16,8 +16,7 @@ class MockRecognition {
           this.onresult(MockRecognition.mockResult);
           this.onend();
         }, 500);
-      }
-      catch (err) {
+      } catch (err) {
         this.onerror(err);
       }
     };

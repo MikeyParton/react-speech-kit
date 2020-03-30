@@ -9,12 +9,14 @@ import PropTypes from 'prop-types';
 const propTypes = {
   children: PropTypes.func.isRequired,
   onEnd: PropTypes.func,
-  onResult: PropTypes.func
+  onResult: PropTypes.func,
+  onError: PropTypes.func
 };
 
 const defaultProps = {
   onEnd: () => {},
-  onResult: () => {}
+  onResult: () => {},
+  onError: () => {}
 };
 
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -26,7 +28,8 @@ const SpeechRekognition = (props) => {
   const {
     children,
     onEnd,
-    onResult
+    onResult,
+    onError
   } = props;
 
   const processResult = (event) => {
@@ -36,6 +39,14 @@ const SpeechRekognition = (props) => {
       .join('');
 
     onResult(transcript);
+  };
+
+  const handleError = (event) => {
+    if (event.error === 'not-allowed') {
+      recognition.current.onend = () => {};
+      setListening(false);
+    }
+    onError(event);
   };
 
   const listen = (args = {}) => {
@@ -48,6 +59,7 @@ const SpeechRekognition = (props) => {
     recognition.current.lang = lang;
     recognition.current.interimResults = interimResults;
     recognition.current.onresult = processResult;
+    recognition.current.onerror = handleError;
     // SpeechRecognition stops automatically after inactivity
     // We want it to keep going until we tell it to stop
     recognition.current.onend = () => recognition.current.start();
