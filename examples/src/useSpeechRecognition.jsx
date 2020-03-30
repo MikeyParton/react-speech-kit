@@ -90,7 +90,7 @@ const Example = () => {
               rows={3}
               disabled
             />
-            <button type="button" onClick={toggle}>
+            <button disabled={blocked} type="button" onClick={toggle}>
               {listening ? 'Stop' : 'Listen'}
             </button>
             {blocked && <p style={{ color: 'red' }}>The microphone is blocked for this site in your browser.</p>}
