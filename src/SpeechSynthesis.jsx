@@ -52,7 +52,7 @@ const SpeechSynthesis = (props) => {
 
   const speak = (args = {}) => {
     const {
-      voice = null, text = '', rate = 1, pitch = 1, volume = 0.5
+      voice = null, text = '', rate = 1, pitch = 1, volume = 1
     } = args;
     setSpeaking(true);
     // Firefox won't repeat an utterance that has been
