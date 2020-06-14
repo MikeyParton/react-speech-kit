@@ -10,25 +10,28 @@ const Example = () => {
   const onEnd = () => {
     // You could do something here after speaking has finished
   };
-  const {
-    speak,
-    cancel,
-    speaking,
-    supported,
-    voices
-  } = useSpeechSynthesis({ onEnd });
+  const { speak, cancel, speaking, supported, voices } = useSpeechSynthesis({
+    onEnd,
+  });
 
   const voice = voices[voiceIndex] || null;
 
   const styleFlexRow = { display: 'flex', flexDirection: 'row' };
-  const styleContainerRatePitch = { display: 'flex', flexDirection: 'column', marginBottom: 12 };
+  const styleContainerRatePitch = {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: 12,
+  };
 
   return (
     <Container>
       <form>
         <h2>Speech Synthesis</h2>
         {!supported && (
-          <p>Oh no, it looks like your browser doesn&#39;t support Speech Synthesis.</p>
+          <p>
+            Oh no, it looks like your browser doesn&#39;t support Speech
+            Synthesis.
+          </p>
         )}
         {supported && (
           <React.Fragment>
@@ -36,14 +39,14 @@ const Example = () => {
               {`Type a message below then click 'Speak'
                 and SpeechSynthesis will read it out.`}
             </p>
-            <label htmlFor="voice">
-              Voice
-            </label>
+            <label htmlFor="voice">Voice</label>
             <select
               id="voice"
               name="voice"
               value={voiceIndex || ''}
-              onChange={(event) => { setVoiceIndex(event.target.value); }}
+              onChange={(event) => {
+                setVoiceIndex(event.target.value);
+              }}
             >
               <option value="">Default</option>
               {voices.map((option, index) => (
@@ -86,27 +89,28 @@ const Example = () => {
                 }}
               />
             </div>
-            <label htmlFor="message">
-              Message
-            </label>
+            <label htmlFor="message">Message</label>
             <textarea
               id="message"
               name="message"
               rows={3}
               value={text}
-              onChange={(event) => { setText(event.target.value); }}
+              onChange={(event) => {
+                setText(event.target.value);
+              }}
             />
-            {speaking
-              ? (
-                <button type="button" onClick={cancel}>
-                  Stop
-                </button>
-              ) : (
-                <button type="button" onClick={() => speak({ text, voice, rate, pitch })}>
-                  Speak
-                </button>
-              )
-            }
+            {speaking ? (
+              <button type="button" onClick={cancel}>
+                Stop
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => speak({ text, voice, rate, pitch })}
+              >
+                Speak
+              </button>
+            )}
           </React.Fragment>
         )}
       </form>

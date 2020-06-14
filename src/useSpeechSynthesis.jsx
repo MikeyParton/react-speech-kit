@@ -1,7 +1,4 @@
-import {
-  useEffect,
-  useState
-} from 'react';
+import { useEffect, useState } from 'react';
 
 const useSpeechSynthesis = (props = {}) => {
   const { onEnd = () => {} } = props;
@@ -41,9 +38,7 @@ const useSpeechSynthesis = (props = {}) => {
   }, []);
 
   const speak = (args = {}) => {
-    const {
-      voice = null, text = '', rate = 1, pitch = 1, volume = 1
-    } = args;
+    const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
     if (!supported) return;
     setSpeaking(true);
     // Firefox won't repeat an utterance that has been
@@ -69,7 +64,7 @@ const useSpeechSynthesis = (props = {}) => {
     speak,
     speaking,
     cancel,
-    voices
+    voices,
   };
 };
 

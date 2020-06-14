@@ -12,7 +12,7 @@ const languageOptions = [
   { label: '普通话 (中国大陆) - Mandarin', value: 'zh' },
   { label: 'Portuguese', value: 'pt-BR' },
   { label: 'Español', value: 'es-MX' },
-  { label: 'Svenska - Swedish', value: 'sv-SE' }
+  { label: 'Svenska - Swedish', value: 'sv-SE' },
 ];
 
 const Example = () => {
@@ -38,50 +38,49 @@ const Example = () => {
     }
   };
 
-  const {
-    listen,
-    listening,
-    stop,
-    supported
-  } = useSpeechRecognition({ onResult, onEnd, onError });
+  const { listen, listening, stop, supported } = useSpeechRecognition({
+    onResult,
+    onEnd,
+    onError,
+  });
 
   const toggle = listening
     ? stop
     : () => {
-      setBlocked(false);
-      listen({ lang });
-    };
+        setBlocked(false);
+        listen({ lang });
+      };
 
   return (
     <Container>
       <form id="speech-recognition-form">
         <h2>Speech Recognition</h2>
         {!supported && (
-          <p>Oh no, it looks like your browser doesn&#39;t support Speech Recognition.</p>
+          <p>
+            Oh no, it looks like your browser doesn&#39;t support Speech
+            Recognition.
+          </p>
         )}
         {supported && (
           <React.Fragment>
             <p>
               {`Click 'Listen' and start speaking.
-               SpeechRecognition will provide a transcript of what you are saying.`
-              }
+               SpeechRecognition will provide a transcript of what you are saying.`}
             </p>
-            <label htmlFor="language">
-              Language
-            </label>
+            <label htmlFor="language">Language</label>
             <select
               form="speech-recognition-form"
               id="language"
               value={lang}
               onChange={changeLang}
             >
-              {languageOptions.map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
+              {languageOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
               ))}
             </select>
-            <label htmlFor="transcript">
-              Transcript
-            </label>
+            <label htmlFor="transcript">Transcript</label>
             <textarea
               id="transcript"
               name="transcript"
@@ -93,7 +92,11 @@ const Example = () => {
             <button disabled={blocked} type="button" onClick={toggle}>
               {listening ? 'Stop' : 'Listen'}
             </button>
-            {blocked && <p style={{ color: 'red' }}>The microphone is blocked for this site in your browser.</p>}
+            {blocked && (
+              <p style={{ color: 'red' }}>
+                The microphone is blocked for this site in your browser.
+              </p>
+            )}
           </React.Fragment>
         )}
       </form>

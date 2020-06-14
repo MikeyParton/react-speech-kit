@@ -57,7 +57,8 @@ export const Container = styled.div`
     margin-bottom: 4px;
   }
 
-  select, textarea {
+  select,
+  textarea {
     font-size: 16px;
     margin-bottom: 12px;
     width: 100%;

@@ -2,12 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import SpeechSynthesisExample from './useSpeechSynthesis';
 import SpeechRecognitionExample from './useSpeechRecognition';
-import {
-  GlobalStyles,
-  Row,
-  GitLink,
-  Title
-} from './shared';
+import { GlobalStyles, Row, GitLink, Title } from './shared';
 import gh from './images/github.png';
 
 const App = () => (
