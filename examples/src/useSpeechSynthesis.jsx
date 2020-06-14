@@ -27,7 +27,7 @@ const Example = () => {
     <Container>
       <form>
         <h2>Speech Synthesis</h2>
-        { !supported && (
+        {!supported && (
           <p>Oh no, it looks like your browser doesn&#39;t support Speech Synthesis.</p>
         )}
         {supported && (
@@ -96,7 +96,7 @@ const Example = () => {
               value={text}
               onChange={(event) => { setText(event.target.value); }}
             />
-            { speaking
+            {speaking
               ? (
                 <button type="button" onClick={cancel}>
                   Stop

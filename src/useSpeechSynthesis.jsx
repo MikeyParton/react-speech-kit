@@ -7,7 +7,7 @@ const useSpeechSynthesis = (props = {}) => {
   const { onEnd = () => {} } = props;
   const [voices, setVoices] = useState([]);
   const [speaking, setSpeaking] = useState(false);
-  const supported = !!window.speechSynthesis;
+  const [supported, setSupported] = useState(false);
 
   const processVoices = (voiceOptions) => {
     setVoices(voiceOptions);
@@ -34,7 +34,8 @@ const useSpeechSynthesis = (props = {}) => {
   };
 
   useEffect(() => {
-    if (supported) {
+    if (typeof window !== 'undefined' && window.speechSynthesis) {
+      setSupported(true);
       getVoices();
     }
   }, []);
@@ -43,6 +44,7 @@ const useSpeechSynthesis = (props = {}) => {
     const {
       voice = null, text = '', rate = 1, pitch = 1, volume = 1
     } = args;
+    if (!supported) return;
     setSpeaking(true);
     // Firefox won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
@@ -57,6 +59,7 @@ const useSpeechSynthesis = (props = {}) => {
   };
 
   const cancel = () => {
+    if (!supported) return;
     setSpeaking(false);
     window.speechSynthesis.cancel();
   };

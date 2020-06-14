@@ -4,8 +4,6 @@ import {
   useState
 } from 'react';
 
-window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-
 const useSpeechRecognition = (props = {}) => {
   const {
     onEnd = () => {},
@@ -14,7 +12,7 @@ const useSpeechRecognition = (props = {}) => {
   } = props;
   const recognition = useRef(null);
   const [listening, setListening] = useState(false);
-  const supported = !!window.SpeechRecognition;
+  const [supported, setSupported] = useState(false);
 
   const processResult = (event) => {
     const transcript = Array.from(event.results)
@@ -34,7 +32,7 @@ const useSpeechRecognition = (props = {}) => {
   };
 
   const listen = (args = {}) => {
-    if (listening) return;
+    if (listening || !supported) return;
     const {
       lang = '', interimResults = true, continuous = false, maxAlternatives = 1, grammars
     } = args;
@@ -55,7 +53,7 @@ const useSpeechRecognition = (props = {}) => {
   };
 
   const stop = () => {
-    if (!listening) return;
+    if (!listening || !supported) return;
     recognition.current.onresult = () => {};
     recognition.current.onend = () => {};
     recognition.current.onerror = () => {};
@@ -65,8 +63,12 @@ const useSpeechRecognition = (props = {}) => {
   };
 
   useEffect(() => {
-    if (!supported) return;
-    recognition.current = new window.SpeechRecognition();
+    if (typeof window === 'undefined') return;
+    window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (window.SpeechRecognition) {
+      setSupported(true);
+      recognition.current = new window.SpeechRecognition();
+    }
   }, []);
 
   return {

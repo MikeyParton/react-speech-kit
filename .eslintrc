@@ -1,7 +1,7 @@
 {
   "globals": {
     "document": true,
-    "window": true,
+    "window": true
   },
   "env": {
     "jest/globals": true
@@ -12,7 +12,7 @@
       "ecmaFeatures": {
           "experimentalObjectRestSpread": true,
           "jsx": true,
-          "es6": true,
+          "es6": true
       },
       "sourceType": "module"
   },
@@ -23,12 +23,13 @@
   ],
   "rules": {
     "comma-dangle": "off",
-    'jsx-a11y/label-has-associated-control': ['error', {
-      labelComponents: [],
-      labelAttributes: [],
-      controlComponents: [],
-      assert: 'either',
-      depth: 25
+    "object-curly-newline": "off",
+    "jsx-a11y/label-has-associated-control": ["error", {
+      "labelComponents": [],
+      "labelAttributes": [],
+      "controlComponents": [],
+      "assert": "either",
+      "depth": 25
     }],
     "jsx-a11y/label-has-for": [ 2, {
       "required": {
@@ -36,6 +37,6 @@
       }
     }],
     "import/no-extraneous-dependencies": ["error", { "devDependencies": ["examples/src/*", "**/*.spec.js", "**/*.spec.jsx"]}],
-    "import/no-unresolved": ["error", { ignore: ["^react$"] }]
+    "import/no-unresolved": ["error", { "ignore": ["^react$"] }]
   }
 }
