@@ -1,4 +1,33 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
+
+/**
+ * Custom hook similar to useCallback, but for callbacks where the dependencies
+ * change frequently. Ensures that references to state and props inside the
+ * callback always get the latest values. Used to keep the `listen` and `stop`
+ * functions in sync with the latest values of the `listening` and `supported`
+ * state variables. See this issue for an example of why this is needed:
+ *
+ *   https://github.com/MikeyParton/react-speech-kit/issues/31
+ *
+ * Implementation taken from "How to read an often-changing value from
+ * useCallback?" in the React hooks API reference:
+ *
+ *   https://reactjs.org/docs/hooks-faq.html#how-to-read-an-often-changing-value-from-usecallback
+ */
+const useEventCallback = (fn, dependencies) => {
+  const ref = useRef(() => {
+    throw new Error('Cannot call an event handler while rendering.');
+  });
+
+  useEffect(() => {
+    ref.current = fn;
+  }, [fn, ...dependencies]);
+
+  return useCallback((args) => {
+    const fn = ref.current;
+    return fn(args);
+  }, [ref]);
+};
 
 const useSpeechRecognition = (props = {}) => {
   const { onEnd = () => {}, onResult = () => {}, onError = () => {} } = props;
@@ -23,7 +52,7 @@ const useSpeechRecognition = (props = {}) => {
     onError(event);
   };
 
-  const listen = (args = {}) => {
+  const listen = useEventCallback((args = {}) => {
     if (listening || !supported) return;
     const {
       lang = '',
@@ -46,9 +75,9 @@ const useSpeechRecognition = (props = {}) => {
     // We want it to keep going until we tell it to stop
     recognition.current.onend = () => recognition.current.start();
     recognition.current.start();
-  };
+  }, [listening, supported, recognition]);
 
-  const stop = () => {
+  const stop = useEventCallback(() => {
     if (!listening || !supported) return;
     recognition.current.onresult = () => {};
     recognition.current.onend = () => {};
@@ -56,7 +85,7 @@ const useSpeechRecognition = (props = {}) => {
     setListening(false);
     recognition.current.stop();
     onEnd();
-  };
+  }, [listening, supported, recognition, onEnd]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
