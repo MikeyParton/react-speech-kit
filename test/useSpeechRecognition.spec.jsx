@@ -21,6 +21,26 @@ describe('useSpeechRecognition', () => {
     return <TestComponent {...props} />;
   };
 
+  // A test component with `listen` and `stop` in closures to test that they
+  // reference the latest value of `listening`
+  const ClosureExample = () => {
+    const props = useSpeechRecognition({
+      onResult: mockOnResult,
+      onEnd: mockOnEnd,
+      onError: mockOnError,
+    });
+
+    props.listenHandler = () => {
+      setTimeout(() => props.listen(), 1000);
+    };
+
+    props.stopHandler = () => {
+      setTimeout(() => props.stop(), 1000);
+    };
+
+    return <TestComponent {...props} />;
+  };
+
   beforeEach(() => {
     jest.clearAllTimers();
     jest.clearAllMocks();
@@ -122,6 +142,25 @@ describe('useSpeechRecognition', () => {
         expect(MockRecognition.start.mock.calls.length).toBe(1);
       });
     });
+
+    describe('when already listening, in a closure', () => {
+      it('does not call start on the window.speechSynthesis instance again', () => {
+        jest.clearAllMocks();
+        const wrapper = mount(<ClosureExample />);
+        act(() => {
+          wrapper.find(TestComponent).props().listen();
+          wrapper.find(TestComponent).props().listenHandler();
+        });
+
+        wrapper.update();
+        act(() => {
+          jest.advanceTimersByTime(1000);
+        });
+
+        wrapper.update();
+        expect(MockRecognition.start.mock.calls.length).toBe(1);
+      });
+    });
   });
 
   describe('stop()', () => {
@@ -152,6 +191,28 @@ describe('useSpeechRecognition', () => {
 
         expect(MockRecognition.stop.mock.calls.length).toBe(0);
         expect(mockOnEnd.mock.calls.length).toBe(0);
+      });
+    });
+
+    describe('while listening, in a closure', () => {
+      it('calls stop on the window.speechSynthesis instance and the provided onEnd prop, then passes listening: false', () => {
+
+        const wrapper = mount(<ClosureExample />);
+        act(() => {
+          wrapper.find(TestComponent).props().listen();
+          wrapper.find(TestComponent).props().stopHandler();
+        });
+
+        wrapper.update();
+
+        act(() => {
+          jest.advanceTimersByTime(1000);
+        });
+
+        wrapper.update();
+        expect(MockRecognition.stop.mock.calls.length).toBe(1);
+        expect(mockOnEnd.mock.calls.length).toBe(1);
+        expect(wrapper.find(TestComponent).props().listening).toBe(false);
       });
     });
   });
