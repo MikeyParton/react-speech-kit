@@ -1,6 +1,6 @@
 {
   "name": "react-speech-kit",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "React hooks for in-browser Speech Recognition and Speech Synthesis.",
   "main": "dist/index.js",
   "scripts": {
