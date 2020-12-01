@@ -5,6 +5,7 @@ const useSpeechSynthesis = (props = {}) => {
   const [voices, setVoices] = useState([]);
   const [speaking, setSpeaking] = useState(false);
   const [supported, setSupported] = useState(false);
+  const [paused, setPaused] = useState(false);
 
   const processVoices = (voiceOptions) => {
     setVoices(voiceOptions);
@@ -27,6 +28,7 @@ const useSpeechSynthesis = (props = {}) => {
 
   const handleEnd = () => {
     setSpeaking(false);
+    setPaused(false);
     onEnd();
   };
 
@@ -56,7 +58,22 @@ const useSpeechSynthesis = (props = {}) => {
   const cancel = () => {
     if (!supported) return;
     setSpeaking(false);
+    setPaused(false);
     window.speechSynthesis.cancel();
+  };
+
+  const pause = () => {
+    if (!supported) return;
+    setSpeaking(false);
+    setPaused(true);
+    window.speechSynthesis.pause();
+  };
+
+  const resume = () => {
+    if (!supported) return;
+    setSpeaking(true);
+    setPaused(false);
+    window.speechSynthesis.resume();
   };
 
   return {
@@ -64,6 +81,9 @@ const useSpeechSynthesis = (props = {}) => {
     speak,
     speaking,
     cancel,
+    pause,
+    paused,
+    resume,
     voices,
   };
 };
