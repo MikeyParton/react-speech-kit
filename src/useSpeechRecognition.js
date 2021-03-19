@@ -41,7 +41,17 @@ const useSpeechRecognition = (props = {}) => {
       .map((result) => result.transcript)
       .join('');
 
-    onResult(transcript);
+    let final = '';
+    let interim = '';
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        final = `${final}${event.results[i][0].transcript}`;
+      } else {
+        interim = `${interim}${event.results[i][0].transcript}`;
+      }
+    }
+
+    onResult(transcript, final, interim);
   };
 
   const handleError = (event) => {
