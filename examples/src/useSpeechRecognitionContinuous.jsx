@@ -60,7 +60,7 @@ const Example = () => {
 
   return (
     <Container>
-      <form id="speech-recognition-form">
+      <form id="continuous-recognition-form">
         <h2>Continuous Recognition</h2>
         {!supported && (
           <p>
@@ -74,10 +74,10 @@ const Example = () => {
               {`Click 'Listen' and start speaking.
                SpeechRecognition will provide a transcript of what you are saying.`}
             </p>
-            <label htmlFor="language">Language</label>
+            <label htmlFor="lang">Language</label>
             <select
               form="speech-recognition-form"
-              id="language"
+              id="lang"
               value={lang}
               onChange={changeLang}
             >
@@ -87,11 +87,8 @@ const Example = () => {
                 </option>
               ))}
             </select>
-            <label htmlFor="transcript">Transcript</label>
-            <div
-              id="transcript"
-              className="textarea"
-            >
+            <label>Transcript</label>
+            <div className="textarea">
               {final && <span className="final">{final}</span>}
               {interim && <span className="interim">{interim}</span>}
             </div>
