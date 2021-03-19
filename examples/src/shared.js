@@ -58,16 +58,35 @@ export const Container = styled.div`
   }
 
   select,
-  textarea {
+  textarea,
+  .textarea {
     font-size: 16px;
     margin-bottom: 12px;
     width: 100%;
   }
 
-  textarea {
+  textarea,
+  .textarea {
     border: 1px solid darkgrey;
     border-radius: 10px;
     padding: 8px;
     resize: none;
+  }
+
+  .textarea {
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    min-height: 72px;
+    background-color: white;
+    font-family: monospace;
+  }
+
+  .final {
+    color: #666;
+  }
+
+  .interim {
+    color: black;
   }
 `;

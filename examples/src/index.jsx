@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import SpeechSynthesisExample from './useSpeechSynthesis';
 import SpeechRecognitionExample from './useSpeechRecognition';
+import SpeechRecognitionContinuousExample from './useSpeechRecognitionContinuous';
 import { GlobalStyles, Row, GitLink, Title } from './shared';
 import gh from './images/github.png';
 
@@ -17,6 +18,7 @@ const App = () => (
     <Row>
       <SpeechSynthesisExample />
       <SpeechRecognitionExample />
+      <SpeechRecognitionContinuousExample />
     </Row>
     <GitLink>
       <img alt="Github" src={gh} />

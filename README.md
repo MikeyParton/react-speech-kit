@@ -149,9 +149,9 @@ Called when SpeechRecognition stops listening.
 
 #### onResult
 
-`function(string)`
+`function(transcript: string, final: string, interim: string)`
 
-Called when SpeechRecognition has a result. It is called with a string containing a transcript of the recognized speech.
+Called when SpeechRecognition has a result. It is called with a string containing a transcript of the entire recognized speech, a string containing the final transcript of the most recent recognized speech, and a string containing the interim transcript of current speech.
 
 ### Returns
 
@@ -170,6 +170,14 @@ Call to make the browser start listening for input. Every time it processes a re
 - **interimResults**  
    `boolean` _(default: true)_  
    SpeechRecognition can provide realtime results as it's trying to figure out the best match for the input. Set to false if you only want the final result.
+
+- **continuous**  
+   `boolean` _(default: false)_  
+   The continuous property of the SpeechRecognition interface controls whether continuous results are returned for each recognition, or only a single result.
+
+- **nonStop**  
+   `boolean` _(default: true)_  
+   When set to `true` SpeechRecognition will not stop automatically after inactivity.
 
 #### stop
 
