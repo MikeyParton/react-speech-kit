@@ -60,6 +60,7 @@ const useSpeechRecognition = (props = {}) => {
       continuous = false,
       maxAlternatives = 1,
       grammars,
+      nonStop = true,
     } = args;
     setListening(true);
     recognition.current.lang = lang;
@@ -73,7 +74,14 @@ const useSpeechRecognition = (props = {}) => {
     }
     // SpeechRecognition stops automatically after inactivity
     // We want it to keep going until we tell it to stop
-    recognition.current.onend = () => recognition.current.start();
+    recognition.current.onend = () => {
+      setListening(false);
+      onEnd();
+      if (nonStop) {
+        setListening(true);
+        recognition.current.start();
+      }
+    }
     recognition.current.start();
   }, [listening, supported, recognition]);
 
