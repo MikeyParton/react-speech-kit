@@ -22,18 +22,13 @@ const Example = () => {
   const [blocked, setBlocked] = useState(false);
 
   const onEnd = () => {
-    console.log('onEnd()');
     setFinal(prevState => `${prevState}${interim} `);
     setInterim('');
   };
 
   const onResult = (_, finalTranscript, interimTranscript) => {
-    console.log('finalTranscript', finalTranscript);
-    console.log('interimTranscript', interimTranscript);
-    // setInterim('');
     setInterim(interimTranscript);
     setFinal(prevState => `${prevState}${finalTranscript}`);
-    // setInterim(prevState => `${prevState}${interimTranscript}`);
   };
 
   const changeLang = (event) => {
