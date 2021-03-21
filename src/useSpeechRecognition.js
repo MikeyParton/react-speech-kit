@@ -36,20 +36,23 @@ const useSpeechRecognition = (props = {}) => {
   const [supported, setSupported] = useState(false);
 
   const processResult = (event) => {
-    const transcript = Array.from(event.results)
-      .map((result) => result[0])
-      .map((result) => result.transcript)
-      .join('');
+    const concat = (arr) => (
+      arr.map((result) => result[0])
+        .map((result) => result.transcript)
+        .join('')
+    );
 
-    let final = '';
-    let interim = '';
-    for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        final = `${final}${event.results[i][0].transcript}`;
-      } else {
-        interim = `${interim}${event.results[i][0].transcript}`;
-      }
-    }
+    const transcript = concat(Array.from(event.results));
+
+    const results = Array.from(event.results)
+      .splice(event.resultIndex);
+
+    const final = concat(
+      results.filter((result) => result.isFinal)
+    );
+    const interim = concat(
+      results.filter((result) => !result.isFinal)
+    );
 
     onResult(transcript, final, interim);
   };
