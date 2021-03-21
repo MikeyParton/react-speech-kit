@@ -36,12 +36,24 @@ const useSpeechRecognition = (props = {}) => {
   const [supported, setSupported] = useState(false);
 
   const processResult = (event) => {
-    const transcript = Array.from(event.results)
-      .map((result) => result[0])
-      .map((result) => result.transcript)
-      .join('');
+    const merge = (arr) => (
+      arr.map((result) => result[0])
+        .map((result) => result.transcript)
+        .join('')
+    );
 
-    onResult(transcript);
+    const results = Array.from(event.results);
+    const changed = results.splice(event.resultIndex)
+
+    const transcript = merge(results);
+    const final = merge(
+      changed.filter((result) => result.isFinal)
+    );
+    const interim = merge(
+      changed.filter((result) => !result.isFinal)
+    );
+
+    onResult(transcript, final, interim);
   };
 
   const handleError = (event) => {
@@ -60,6 +72,7 @@ const useSpeechRecognition = (props = {}) => {
       continuous = false,
       maxAlternatives = 1,
       grammars,
+      nonStop = true,
     } = args;
     setListening(true);
     recognition.current.lang = lang;
@@ -73,7 +86,14 @@ const useSpeechRecognition = (props = {}) => {
     }
     // SpeechRecognition stops automatically after inactivity
     // We want it to keep going until we tell it to stop
-    recognition.current.onend = () => recognition.current.start();
+    recognition.current.onend = () => {
+      setListening(false);
+      onEnd();
+      if (nonStop) {
+        setListening(true);
+        recognition.current.start();
+      }
+    }
     recognition.current.start();
   }, [listening, supported, recognition]);
 
