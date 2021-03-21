@@ -42,16 +42,15 @@ const useSpeechRecognition = (props = {}) => {
         .join('')
     );
 
-    const transcript = concat(Array.from(event.results));
+    const results = Array.from(event.results);
+    const spliced = results.splice(event.resultIndex)
 
-    const results = Array.from(event.results)
-      .splice(event.resultIndex);
-
+    const transcript = concat(results);
     const final = concat(
-      results.filter((result) => result.isFinal)
+      spliced.filter((result) => result.isFinal)
     );
     const interim = concat(
-      results.filter((result) => !result.isFinal)
+      spliced.filter((result) => !result.isFinal)
     );
 
     onResult(transcript, final, interim);
