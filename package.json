@@ -12,6 +12,10 @@
     "deploy-demo": "gh-pages -d examples/dist",
     "publish-demo": "npm run build-demo && npm run deploy-demo"
   },
+  "repository": {	
+    "type": "git",
+    "url": "https://github.com/MikeyParton/react-speech-kit.git"
+  },
   "author": "Michael Parton",
   "license": "MIT",
   "peerDependencies": {
