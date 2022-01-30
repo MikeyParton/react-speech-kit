@@ -58,14 +58,13 @@ const useSpeechSynthesis = (props = {}) => {
     setSpeaking(false);
     window.speechSynthesis.cancel();
   };
-var pause = function pause() {
+  const pause = () => {
     if(!supported) return;
     
     window.speechSynthesis.pause();
   }
-  var resume = function resume() {
+  const resume = () => {
     if(!supported) return;
-    
     window.speechSynthesis.resume();
   }
   return {
