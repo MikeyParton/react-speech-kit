@@ -15,8 +15,8 @@
   "author": "Michael Parton",
   "license": "MIT",
   "peerDependencies": {
-    "prop-types": "^15.7.2",
-    "react": "^16.8.0"
+    "prop-types": ">=15.7.2",
+    "react": ">=16.8.0"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
