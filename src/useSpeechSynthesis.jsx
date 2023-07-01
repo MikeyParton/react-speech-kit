@@ -38,7 +38,7 @@ const useSpeechSynthesis = (props = {}) => {
   }, []);
 
   const speak = (args = {}) => {
-    const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args;
+    const { voice = null, text = '', rate = 1, pitch = 1, volume = 1, soundStart=null, soundEnd=null } = args;
     if (!supported) return;
     setSpeaking(true);
     // Firefox won't repeat an utterance that has been
@@ -46,11 +46,31 @@ const useSpeechSynthesis = (props = {}) => {
     const utterance = new window.SpeechSynthesisUtterance();
     utterance.text = text;
     utterance.voice = voice;
-    utterance.onend = handleEnd;
     utterance.rate = rate;
     utterance.pitch = pitch;
     utterance.volume = volume;
-    window.speechSynthesis.speak(utterance);
+	// check if sound start exist
+	if(soundStart){
+		const audioStart = new Audio(soundStart);
+		utterance.onstart = () => {
+			audioStart.play();
+			window.speechSynthesis.pause();
+			audioStart.onended=function(){
+				window.speechSynthesis.resume();
+			}
+		}
+	}
+	// check if sound end exist
+	if(soundEnd){
+		const audioEnd = new Audio(soundEnd);
+		utterance.onend = () => { 
+			handleEnd();
+			audioEnd.play();
+		}
+	} else {
+		utterance.onend = handleEnd;
+	}
+    window.speechSynthesis.speak(utterance); 
   };
 
   const cancel = () => {
